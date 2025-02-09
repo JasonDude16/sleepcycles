@@ -28,9 +28,3 @@ These functions visualize sleep cycle statistics across multiple subjects.
 \item \code{plot_cycle_counts()}: Plots a bar chart of cycle counts.
 }
 }
-\examples{
-plot_ids(sleepcycle_obj)
-plot_cycle_proportions(sleepcycle_obj)
-plot_cycle_counts(sleepcycle_obj)
-
-}

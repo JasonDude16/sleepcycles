@@ -31,9 +31,8 @@
 #' data(hypnogram_grouped)
 #' head(hypnogram_grouped)
 #'
-#' # Use with sleepcycles_from_hypnogram()
-#' sleepcycles_from_hypnogram(hypnogram_single, epoch_col = "epoch", stage_col = "stage")
-#' sleepcycles_from_hypnogram(hypnogram_grouped, epoch_col = "epoch", stage_col = "stage", id_col = "id")
+#' @keywords datasets
+#' @aliases hypnogram_single hypnogram_grouped
 "hypnogram_single"
 
 "hypnogram_grouped"

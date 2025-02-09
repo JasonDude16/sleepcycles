@@ -15,17 +15,14 @@
 #' @param overlay_clrs Color palette for cycle overlays.
 #'
 #' @return A `ggplot` object.
+#'
+#' @importFrom rlang .data
+#'
 #' @export
-#'
-#' @examples
-#' plot_hypnogram(sleepcycle_obj)
-#' plot_densities(sleepcycle_obj)
-#' plot_cycles(sleepcycle_obj)
-#'
 #' @rdname sleep_plots
 plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overlay_cycles = TRUE, overlay_clrs = c("#3B528BFF", "#5DC863FF")) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -38,7 +35,7 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
   }
 
   x$epoch <- x$epoch |> dplyr::mutate(rem_mask = as.factor(ifelse(.data[[stage_col]] == "R", 1, 0)))
-  x_rem <- x$epoch |> dplyr::filter(rem_mask == 1)
+  x_rem <- x$epoch |> dplyr::filter(.data$rem_mask == 1)
 
   p <- x$epoch |>
     ggplot2::ggplot() +
@@ -60,7 +57,7 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
 
   if (overlay_cycles) {
 
-    x_summary <- dplyr::filter(x$summary, cycle_type %in% c("NREMP", "REMP"))
+    x_summary <- dplyr::filter(x$summary, .data$cycle_type %in% c("NREMP", "REMP"))
     if (length(unique(x_summary$cycle_type)) == 1) {
 
       if (unique(x_summary$cycle_type) == "NREMP") {
@@ -76,11 +73,11 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
     p <- p + ggplot2::geom_rect(
       data = x_summary,
       mapping = ggplot2::aes(
-        xmin = start_epoch,
-        xmax = end_epoch,
+        xmin = .data$start_epoch,
+        xmax = .data$end_epoch,
         ymin = stage_levels[1],
         ymax = stage_levels[length(stage_levels)],
-        fill = cycle_type
+        fill = .data$cycle_type
       ),
       alpha = .2,
       show.legend = F
@@ -94,10 +91,11 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
 
 
 #' @export
+#' @importFrom rlang .data
 #' @rdname sleep_plots
 plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clrs = c("#3B528BFF", "#5DC863FF"), overlay_cycles = TRUE, overlay_clrs = clrs) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -114,7 +112,7 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
 
   x_long <- x$epoch |>
     tidyr::pivot_longer(cols = opts$density_levels) |>
-    dplyr::filter(name %in% include_levels)
+    dplyr::filter(.data$name %in% include_levels)
 
   x_long$threshold <- NA
   for (type in c("NREMP", "REMP")) {
@@ -124,14 +122,14 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
   p <- x_long |>
     ggplot2::ggplot() +
     ggplot2::geom_line(
-      ggplot2::aes(.data[[x$info$epoch_col]], value, col = name),
+      ggplot2::aes(.data[[x$info$epoch_col]], .data$value, col = .data$name),
       show.legend = F,
       linewidth = 1.2
     ) +
     ggplot2::facet_wrap(~name, ncol = 1) +
     ggplot2::scale_y_continuous(breaks = c(0, 0.5, 1), labels = c(0, 0.5, 1)) +
     ggplot2::scale_color_manual(values = clrs) +
-    ggplot2::geom_hline(ggplot2::aes(yintercept = threshold), linetype = 2) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = .data$threshold), linetype = 2) +
     ggplot2::xlab(x$info$epoch_col) +
     ggplot2::xlab("") +
     ggplot2::ylab("Density") +
@@ -155,9 +153,9 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
       mapping = ggplot2::aes(
         ymin = 0,
         ymax = 1,
-        xmin = start_epoch,
-        xmax = end_epoch,
-        fill = cycle_type
+        xmin = .data$start_epoch,
+        xmax = .data$end_epoch,
+        fill = .data$cycle_type
       ),
       alpha = .2,
       show.legend = F
@@ -170,33 +168,34 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
 
 
 #' @export
+#' @importFrom rlang .data
 #' @rdname sleep_plots
 plot_cycles <- function(sleepcycle_obj, id = NULL) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
   x <- .handle_grouped_obj(sleepcycle_obj, id)
 
   x_nc <- x$epoch |>
-    dplyr::filter(is.na(cycle_type)) |>
+    dplyr::filter(is.na(.data$cycle_type)) |>
     dplyr::mutate(cycle_type = "NC")
 
   p <- x$epoch |>
-    dplyr::filter(!is.na(cycle_type)) |>
+    dplyr::filter(!is.na(.data$cycle_type)) |>
     ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(
       .data[[x$info$epoch_col]],
-      cycle_type,
+      .data$cycle_type,
       col = .data[[x$info$stage_col]],
-      group = interaction(cycle_type, cycle),
+      group = interaction(.data$cycle_type, .data$cycle),
     ),
     linewidth = 5
     ) +
     ggplot2::geom_point(
       data = x_nc,
-      mapping = ggplot2::aes(.data[[x$info$epoch_col]], cycle_type),
+      mapping = ggplot2::aes(.data[[x$info$epoch_col]], .data$cycle_type),
       size = 2
     ) +
     ggplot2::scale_y_discrete(labels = c("NC", unique(x$summary$cycle_type))) +
@@ -223,12 +222,9 @@ plot_cycles <- function(sleepcycle_obj, id = NULL) {
 #'
 #' @return A grid of `ggplot` objects.
 #' @export
-#'
-#' @examples
-#' plot_summary(sleepcycle_obj)
 plot_summary <- function(sleepcycle_obj, id = NULL) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -259,16 +255,11 @@ plot_summary <- function(sleepcycle_obj, id = NULL) {
 #'
 #' @return A `ggplot` object.
 #' @export
-#'
-#' @examples
-#' plot_ids(sleepcycle_obj)
-#' plot_cycle_proportions(sleepcycle_obj)
-#' plot_cycle_counts(sleepcycle_obj)
-#'
+#' @importFrom rlang .data
 #' @rdname sleep_group_plots
 plot_ids <- function(sleepcycle_obj) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -278,10 +269,15 @@ plot_ids <- function(sleepcycle_obj) {
 
   id_col <- sleepcycle_obj$info$id_col
   p <- sleepcycle_obj$summary |>
-    dplyr::filter(cycle_type %in% c("NREMP", "REMP")) |>
+    dplyr::filter(.data$cycle_type %in% c("NREMP", "REMP")) |>
     dplyr::select(dplyr::all_of(c(id_col, "cycle", "cycle_type", "start_prop", "end_prop"))) |>
-    tidyr::pivot_longer(-c(.data[[id_col]], cycle_type, cycle)) |>
-    ggplot2::ggplot(ggplot2::aes(value, .data[[id_col]], col = cycle_type, group = interaction(.data[[id_col]], cycle))) +
+    tidyr::pivot_longer(-c(.data[[id_col]], .data$cycle_type, .data$cycle)) |>
+    ggplot2::ggplot(ggplot2::aes(
+      .data$value,
+      .data[[id_col]],
+      col = .data$cycle_type,
+      group = interaction(.data[[id_col]], .data$cycle)
+    )) +
     ggplot2::geom_line(linewidth = 1.5) +
     ggplot2::xlab("Proportion into night") +
     ggplot2::scale_color_manual(values = c("#3B528BFF", "#5DC863FF"), name = "Type") +
@@ -298,10 +294,11 @@ plot_ids <- function(sleepcycle_obj) {
 
 
 #' @export
+#' @importFrom rlang .data
 #' @rdname sleep_group_plots
 plot_cycle_proportions <- function(sleepcycle_obj) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -310,11 +307,11 @@ plot_cycle_proportions <- function(sleepcycle_obj) {
   }
 
   p <- sleepcycle_obj$summary |>
-    dplyr::filter(cycle_type %in% c("NREMP", "REMP")) |>
-    dplyr::group_by(cycle_type, cycle) |>
-    dplyr::summarise(cycle_count = n()) |>
-    dplyr::mutate(prop = cycle_count / max(cycle_count)) |>
-    ggplot2::ggplot(ggplot2::aes(cycle, prop, col = cycle_type)) +
+    dplyr::filter(.data$cycle_type %in% c("NREMP", "REMP")) |>
+    dplyr::group_by(.data$cycle_type, .data$cycle) |>
+    dplyr::summarise(cycle_count = dplyr::n()) |>
+    dplyr::mutate(prop = .data$cycle_count / max(.data$cycle_count)) |>
+    ggplot2::ggplot(ggplot2::aes(.data$cycle, .data$prop, col = .data$cycle_type)) +
     ggplot2::geom_line(stat = "identity", linewidth = 1.5) +
     ggplot2::ylab("Proportion") +
     ggplot2::xlab("Cycle") +
@@ -327,10 +324,11 @@ plot_cycle_proportions <- function(sleepcycle_obj) {
 }
 
 #' @export
+#' @importFrom rlang .data
 #' @rdname sleep_group_plots
 plot_cycle_counts <- function(sleepcycle_obj) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
@@ -339,10 +337,10 @@ plot_cycle_counts <- function(sleepcycle_obj) {
   }
 
   p <- sleepcycle_obj$summary |>
-    dplyr::filter(cycle_type %in% c("NREMP", "REMP")) |>
-    dplyr::group_by(cycle_type, cycle) |>
-    dplyr::summarise(cycle_count = n()) |>
-    ggplot2::ggplot(ggplot2::aes(cycle, cycle_count, fill = cycle_type)) +
+    dplyr::filter(.data$cycle_type %in% c("NREMP", "REMP")) |>
+    dplyr::group_by(.data$cycle_type, .data$cycle) |>
+    dplyr::summarise(cycle_count = dplyr::n()) |>
+    ggplot2::ggplot(ggplot2::aes(.data$cycle, .data$cycle_count, fill = .data$cycle_type)) +
     ggplot2::geom_bar(stat = "identity", position = "dodge", linewidth = 1.2, alpha = .9) +
     ggplot2::ylab("Count") +
     ggplot2::xlab("Cycle") +

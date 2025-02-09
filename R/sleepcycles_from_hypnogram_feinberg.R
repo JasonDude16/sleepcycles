@@ -17,6 +17,7 @@
 #'   - `epoch`: A data frame with cycle annotations for each epoch.
 #'   - `summary`: A summary of detected sleep cycles.
 #'   - `info`: The options used in the analysis.
+#'
 #' @keywords internal
 .sleepcycles_from_hypnogram_feinberg <- function(df, epoch_col, stage_col, options = list()) {
 
@@ -71,7 +72,7 @@
 
   # Format output: Assign cycle labels
   df_epoch <- df |>
-    dplyr::rename(cycle = cycles) |>
+    dplyr::rename(cycle = .data$cycles) |>
     dplyr::mutate(cycle_type = dplyr::case_when(REM.NREM == 0 ~ "NREMP", REM.NREM == 1 ~ "REMP")) |>
     dplyr::select(dplyr::all_of(c(epoch_col, stage_col, "cycle", "cycle_type"))) |>
     tibble::as_tibble()
@@ -189,7 +190,7 @@
         toolong <- c(toolong, cycs[k - 1])
       }
     }
-    toolong <- na.omit(toolong)
+    toolong <- stats::na.omit(toolong)
 
   } else {
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
@@ -204,7 +205,7 @@
         toolong <- c(toolong, cycs[k - 1])
       }
     }
-    toolong <- na.omit(toolong)
+    toolong <- stats::na.omit(toolong)
   }
 
   return(toolong)
@@ -259,14 +260,14 @@
             }
           }
         }
-        RWN12s_start2 <- RWN12s_start2[RWN12s_start2 < tail(N3_start, 1)]
+        RWN12s_start2 <- RWN12s_start2[RWN12s_start2 < utils::tail(N3_start, 1)]
         n <- NA
         for (zzz in 1:length(RWN12s_start2)) {
           minpositive = function(x) min(x[x > 0])
           val <- which(minpositive(N3_start - RWN12s_start2[zzz]) == (N3_start - RWN12s_start2[zzz]))
           n <- c(n, val)
         }
-        n <- na.omit(n)
+        n <- stats::na.omit(n)
         if (N3_start[1] == N3s[1]) {
           n <- n[-c(1)]
         }
@@ -281,7 +282,7 @@
           pp <- ggplot2::ggplot(
             dfplot,
             ggplot2::aes(
-              x = time,
+              x = .data$time,
               y = .data[[stage_col]],
               colour = .data[[stage_col]],
               group = 1
@@ -289,7 +290,7 @@
           ) +
             ggplot2::theme_bw() +
             ggplot2::geom_point() +
-            ggplot2::geom_line(ggplot2::aes(x = time, y = .data[[stage_col]])) +
+            ggplot2::geom_line(ggplot2::aes(x = .data$time, y = .data[[stage_col]])) +
             ggplot2::xlab("Epoch") +
             ggplot2::ylab("Sleep Stage") +
             ggplot2::scale_color_viridis_d(name = "Sleep Stage") +
@@ -438,37 +439,37 @@
   cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
   if (data$CycleStart[cycs[length(cycs)]] == "REMP") {
     REMs <- which(data$Descr3 == "REM")
-    if (tail(REMs, n = 1) == nrow(data)) {
-      stop <- tail(REMs, n = 1)
+    if (utils::tail(REMs, n = 1) == nrow(data)) {
+      stop <- utils::tail(REMs, n = 1)
       data$CycleStart[stop] <- "stop"
     }
     else {
-      stop <- tail(REMs, n = 1) + 1
+      stop <- utils::tail(REMs, n = 1) + 1
       data$CycleStart[stop] <- "stop"
       data$cycles[stop:nrow(data)] <- NA
       data$REM.NREM[stop:nrow(data)] <- NA
     }
   }
   else {
-    lastNREMP <- tail(which(data$CycleStart == "NREMP"),
+    lastNREMP <- utils::tail(which(data$CycleStart == "NREMP"),
                       1)
     Ws <- which(data$Descr3 == "W")
     Ws <- Ws[Ws > lastNREMP]
     if (length(Ws) > 2) {
-      Ws_start <- head(Ws, 1)
+      Ws_start <- utils::head(Ws, 1)
       for (kk in 2:(length(Ws))) {
         if (Ws[kk - 1] != Ws[kk] - 1) {
           Ws_start <- c(Ws_start, Ws[kk])
         }
       }
-      Ws_start <- tail(Ws_start, 1)
+      Ws_start <- utils::tail(Ws_start, 1)
     }
     else {
       Ws_start <- c()
     }
     NREMs <- which(data$Descr3 == "NREM")
     if (length(Ws_start) > 0) {
-      if (Ws_start < tail(NREMs, 1))
+      if (Ws_start < utils::tail(NREMs, 1))
         Ws_start <- c()
     }
     if (length(Ws_start) == 0 & data$Descr3[nrow(data)] == "W")
@@ -481,14 +482,14 @@
     cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
     if (data$CycleStart[cycs[length(cycs)]] == "REMP") {
       REMs <- which(data$Descr3 == "REM")
-      if (tail(REMs, n = 1) == nrow(data)) {
+      if (utils::tail(REMs, n = 1) == nrow(data)) {
         data$CycleStart[data$CycleStart == "stop"] <- NA
-        stop <- tail(REMs, n = 1)
+        stop <- utils::tail(REMs, n = 1)
         data$CycleStart[stop] <- "stop"
       }
       else {
         data$CycleStart[data$CycleStart == "stop"] <- NA
-        stop <- tail(REMs, n = 1) + 1
+        stop <- utils::tail(REMs, n = 1) + 1
         data$CycleStart[stop] <- "stop"
         data$cycles[stop:nrow(data)] <- NA
         data$REM.NREM[stop:nrow(data)] <- NA
@@ -496,15 +497,15 @@
     }
     check <- which(data$CycleStart == "stop")
     if (length(check) > 0) {
-      if (stop - tail(which(data$CycleStart == "NREMP"), 1) >= 30) {
+      if (stop - utils::tail(which(data$CycleStart == "NREMP"), 1) >= 30) {
         data$cycles[stop:nrow(data)] <- NA
         data$REM.NREM[stop:nrow(data)] <- NA
       }
       else {
-        data$CycleStart[tail(which(data$CycleStart == "NREMP"), 1)] <- "stop"
+        data$CycleStart[utils::tail(which(data$CycleStart == "NREMP"), 1)] <- "stop"
         data$CycleStart[stop] <- NA
-        data$cycles[tail(which(data$CycleStart == "stop"), 1):nrow(data)] <- NA
-        data$REM.NREM[tail(which(data$CycleStart == "stop"), 1):nrow(data)] <- NA
+        data$cycles[utils::tail(which(data$CycleStart == "stop"), 1):nrow(data)] <- NA
+        data$REM.NREM[utils::tail(which(data$CycleStart == "stop"), 1):nrow(data)] <- NA
         cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
         if (data$CycleStart[cycs[length(cycs)]] == "REMP") {
           REMs <- which(data$Descr3 == "REM")

@@ -26,9 +26,3 @@ This function extracts the \strong{sleep cycle data} for a specific subject from
 This function is used to \strong{extract a single subject's sleep cycle data} from a \strong{multi-subject dataset}.
 If the provided \code{sleepcycle_obj} is \strong{not grouped}, the function stops execution to prevent unnecessary extraction.
 }
-\examples{
-\dontrun{
-grouped_sc <- sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage", id_col = "subject_id")
-single_subject_sc <- get_id(grouped_sc, id = "S01")
-}
-}

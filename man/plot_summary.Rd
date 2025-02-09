@@ -17,6 +17,3 @@ A grid of \code{ggplot} objects.
 \description{
 This function generates a combined visualization of a hypnogram, sleep cycles, and, if using the 'dude' algorithm, cycle densities.
 }
-\examples{
-plot_summary(sleepcycle_obj)
-}

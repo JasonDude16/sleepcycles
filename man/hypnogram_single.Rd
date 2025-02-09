@@ -3,6 +3,7 @@
 \docType{data}
 \name{hypnogram_single}
 \alias{hypnogram_single}
+\alias{hypnogram_grouped}
 \title{Example Hypnogram Datasets}
 \format{
 \itemize{
@@ -41,8 +42,5 @@ head(hypnogram_single)
 data(hypnogram_grouped)
 head(hypnogram_grouped)
 
-# Use with sleepcycles_from_hypnogram()
-sleepcycles_from_hypnogram(hypnogram_single, epoch_col = "epoch", stage_col = "stage")
-sleepcycles_from_hypnogram(hypnogram_grouped, epoch_col = "epoch", stage_col = "stage", id_col = "id")
 }
 \keyword{datasets}

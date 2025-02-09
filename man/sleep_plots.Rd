@@ -53,9 +53,3 @@ These functions generate plots related to sleep cycles from a \code{SleepCycle} 
 \item \code{plot_cycles()}: Visualizes the structure of sleep cycles.
 }
 }
-\examples{
-plot_hypnogram(sleepcycle_obj)
-plot_densities(sleepcycle_obj)
-plot_cycles(sleepcycle_obj)
-
-}

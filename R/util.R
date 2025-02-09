@@ -15,15 +15,9 @@
 #' If the provided `sleepcycle_obj` is **not grouped**, the function stops execution to prevent unnecessary extraction.
 #'
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' grouped_sc <- sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage", id_col = "subject_id")
-#' single_subject_sc <- get_id(grouped_sc, id = "S01")
-#' }
 get_id <- function(sleepcycle_obj, id) {
 
-  if (class(sleepcycle_obj) != "SleepCycle") {
+  if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
   x <- sleepcycle_obj

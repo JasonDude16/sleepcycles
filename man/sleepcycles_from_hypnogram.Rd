@@ -86,12 +86,3 @@ Then, based on the chosen \strong{method}, it calls either \code{.sleepcycles_fr
 
 If \code{id_col} is provided, the function runs the cycle detection \strong{independently for each subject} and combines the results.
 }
-\examples{
-# Example 1: Running DUDE on a simple hypnogram
-df <- data.frame(epoch = 1:100, stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage", method = "dude")
-
-# Example 2: Running Feinberg on multi-subject data
-grouped_df <- data.frame(id = rep(1:2, each = 50), epoch = rep(1:50, 2), stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-sleepcycles_from_hypnogram(grouped_df, epoch_col = "epoch", stage_col = "stage", method = "feinberg", id_col = "id")
-}

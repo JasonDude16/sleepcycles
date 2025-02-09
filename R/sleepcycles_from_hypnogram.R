@@ -49,16 +49,9 @@
 #'
 #' If `id_col` is provided, the function runs the cycle detection **independently for each subject** and combines the results.
 #'
+#' @importFrom rlang .data
+#'
 #' @export
-#'
-#' @examples
-#' # Example 1: Running DUDE on a simple hypnogram
-#' df <- data.frame(epoch = 1:100, stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-#' sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage", method = "dude")
-#'
-#' # Example 2: Running Feinberg on multi-subject data
-#' grouped_df <- data.frame(id = rep(1:2, each = 50), epoch = rep(1:50, 2), stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-#' sleepcycles_from_hypnogram(grouped_df, epoch_col = "epoch", stage_col = "stage", method = "feinberg", id_col = "id")
 sleepcycles_from_hypnogram <- function(df, epoch_col = NULL, stage_col = NULL, method = "dude", options = list(), id_col = NULL, verbose = TRUE) {
 
   stopifnot(method %in% c("dude", "feinberg"))
@@ -161,8 +154,6 @@ sleepcycles_from_hypnogram <- function(df, epoch_col = NULL, stage_col = NULL, m
 #'
 #' @return Returns `NULL` if no issues are found. Otherwise, an error is thrown.
 #' @keywords internal
-#'
-#' @rdname check_hypnogram
 .check_hypnogram_base <- function(df, epoch_col, stage_col, valid_levels = c("N3", "N2", "N1", "R", "W", "A")) {
 
   stopifnot(
@@ -228,19 +219,10 @@ sleepcycles_from_hypnogram <- function(df, epoch_col = NULL, stage_col = NULL, m
 #' @param id_col (Optional) A column representing subject IDs for grouped data. If provided, validation runs separately for each subject.
 #' @param on_error Defines error handling behavior:
 #'   - `"stop"` (default) will halt execution on errors.
-#'   - `"message"` will print warnings instead of stopping execution.
+#'   - `"message"` will print warnings instead of stopping execution. This behavior allows the user to see errors for all ids when working with a grouped hypnogram.
 #'
 #' @return Returns `NULL` if validation is successful. Otherwise, it stops or prints an error message.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' df <- data.frame(epoch = 1:100, stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-#' check_hypnogram(df, epoch_col = "epoch", stage_col = "stage")
-#'
-#' grouped_df <- data.frame(id = rep(1:2, each = 50), epoch = rep(1:50, 2), stage = sample(c("N3", "N2", "N1", "R", "W"), 100, replace = TRUE))
-#' check_hypnogram(grouped_df, epoch_col = "epoch", stage_col = "stage", id_col = "id")
-#' }
 check_hypnogram <- function(df, epoch_col, stage_col, id_col = NULL, on_error = "stop") {
 
   stopifnot(on_error %in% c("stop", "message"))
@@ -296,40 +278,41 @@ check_hypnogram <- function(df, epoch_col, stage_col, id_col = NULL, on_error = 
   last_sleep_epoch <- df[[epoch_col]][last_sleep]
 
   res <- x |>
-    dplyr::mutate(n_epochs = end_epoch - start_epoch + 1) |>
+    dplyr::mutate(n_epochs = .data$end_epoch - .data$start_epoch + 1) |>
     dplyr::filter(...) |>
-    dplyr::group_by(cycle_type) |>
+    dplyr::group_by(.data$cycle_type) |>
     dplyr::mutate(cycle = 1:dplyr::n()) |>
     dplyr::ungroup() |>
     dplyr::mutate(
       first_sleep_epoch = first_sleep_epoch,
       last_sleep_epoch = last_sleep_epoch,
       sleep_dur = (last_sleep - first_sleep) + 1,
-      start_prop = (start_epoch - first_sleep_epoch + 1) / sleep_dur,
-      end_prop = (end_epoch - first_sleep_epoch + 1) / sleep_dur
+      start_prop = (.data$start_epoch - first_sleep_epoch + 1) / .data$sleep_dur,
+      end_prop = (.data$end_epoch - first_sleep_epoch + 1) / .data$sleep_dur
     ) |>
-    dplyr::select(cycle, dplyr::everything())
+    dplyr::select(dplyr::all_of("cycle"), dplyr::everything())
 
   return(res)
 }
 
 #' Custom Print Method for SleepCycle Objects
 #'
-#' @param obj A SleepCycle object.
+#' @param x A SleepCycle object.
+#' @param ... not currently implemented.
 #' @export
-print.SleepCycle <- function(obj) {
+print.SleepCycle <- function(x, ...) {
   gray_text <- crayon::make_style("gray60")
-  print(obj[c("epoch", "summary")])
+  print(x[c("epoch", "summary")])
   cat("$info")
   cat(
     gray_text(
       "\n<info list> \n",
-      paste0("is_grouped: ", obj$info$is_grouped, "\n"),
-      paste0("id_col: ", if(is.null(obj$info$id_col)) "NULL" else obj$info$id_col, "\n"),
-      paste0("epoch_col: ", obj$info$epoch_col, "\n"),
-      paste0("stage_col: ", obj$info$stage_col, "\n"),
-      paste0("stage_levels: ", paste(obj$info$stage_levels, collapse = " "), "\n"),
-      paste0("method: ", obj$info$method, "\n"),
+      paste0("is_grouped: ", x$info$is_grouped, "\n"),
+      paste0("id_col: ", if(is.null(x$info$id_col)) "NULL" else x$info$id_col, "\n"),
+      paste0("epoch_col: ", x$info$epoch_col, "\n"),
+      paste0("stage_col: ", x$info$stage_col, "\n"),
+      paste0("stage_levels: ", paste(x$info$stage_levels, collapse = " "), "\n"),
+      paste0("method: ", x$info$method, "\n"),
       "method_opts <...> \n<info list>\n"
     )
   )

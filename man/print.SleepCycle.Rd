@@ -4,10 +4,12 @@
 \alias{print.SleepCycle}
 \title{Custom Print Method for SleepCycle Objects}
 \usage{
-\method{print}{SleepCycle}(obj)
+\method{print}{SleepCycle}(x, ...)
 }
 \arguments{
-\item{obj}{A SleepCycle object.}
+\item{x}{A SleepCycle object.}
+
+\item{...}{not currently implemented.}
 }
 \description{
 Custom Print Method for SleepCycle Objects
