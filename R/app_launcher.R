@@ -1,71 +1,45 @@
-#' Interactive Shiny App for Exploring SleepCycle Objects
+#' Interactive Shiny App for Exploring Sleep Cycles
 #'
-#' This function launches a Shiny app that allows users to **interactively explore and modify sleep cycle detection parameters**
-#' using the **Dude algorithm**. The app visualizes **Non-REM Periods (NREMP)** and **REM Periods (REMP)**
+#' This function launches a Shiny app that allows users to interactively explore and modify sleep cycle detection parameters
+#' using the Dude algorithm. The app visualizes Non-REM Periods (NREMP) REM Periods (REMP)
 #' while allowing users to adjust key parameters that control how sleep cycles are detected.
 #'
-#' ## **Dude Algorithm Parameters**
-#' The **Dude algorithm** (Density-Based Sleep Cycle Detection) identifies sleep cycles based on **density thresholds**
-#' and **temporal continuity rules**. This app allows users to adjust the following parameters:
+#' The **Dude algorithm** identifies sleep cycles based on density thresholds
+#' and temporal continuity rules. This app allows users to adjust the following NREMP and REMP parameters:
 #'
-#' - **`NREMP Density Column` (`nremp_density_col`)**:
+#' - **Density variable**:
 #'   The **EEG feature** or **sleep stage combination** used to measure Non-REM density.
-#'   (Options depend on `sleepcycles_obj$info$method_opts$density_levels`).
 #'
-#' - **`NREMP Threshold` (`nremp_threshold`)**:
-#'   A **cutoff value (0.1 - 1.0)** that defines what constitutes a Non-REM Period.
-#'   Increasing this value **reduces false positives** but may exclude shorter NREMPs.
+#' - **Density threshold**:
+#'   A cutoff value (0.1 - 1.0) that defines what constitutes a Non-REM Period.
+#'   Increasing this value increase specificity but may lower sensitivity.
 #'
-#' - **`NREMP Minimum Gap` (`nremp_min_gap`)**:
-#'   The **minimum duration (in epochs) between two separate NREMPs**.
-#'   If two NREMPs are closer than this, they are **merged into one**.
+#' - **Minimum gap**:
+#'   The minimum duration (in epochs) between two separate NREMP/REMPs.
+#'   If two NREMPs are closer than this, they are merged into one.
 #'
-#' - **`NREMP Minimum Size` (`nremp_min_size`)**:
-#'   The **smallest possible NREMP duration (in epochs)**.
-#'   Shorter NREMPs are **filtered out** if they do not meet this criterion.
-#'
-#' - **`REMP Density Column` (`remp_density_col`)**:
-#'   The **EEG feature** or **sleep stage combination** used to measure REM density.
-#'   (Options depend on `sleepcycles_obj$info$method_opts$density_levels`).
-#'
-#' - **`REMP Threshold` (`remp_threshold`)**:
-#'   A **cutoff value (0.1 - 1.0)** that defines what constitutes a REM Period.
-#'   Increasing this value **filters out weak REM signals** but may exclude **short REM episodes**.
-#'
-#' - **`REMP Minimum Gap` (`remp_min_gap`)**:
-#'   The **minimum duration (in epochs) between two separate REMPs**.
-#'   If two REMPs are closer than this, they are **merged into one**.
-#'
-#' - **`REMP Minimum Size` (`remp_min_size`)**:
-#'   The **smallest possible REMP duration (in epochs)**.
-#'   Shorter REMPs are **filtered out** if they do not meet this criterion.
-#'
-#' ## **How to Use the Shiny App**
-#' - Run the function interactively:
-#'   ```r
-#'   if (interactive()) {
-#'     sleepcycles_shiny_app(sleepcycles_obj)
-#'   }
-#'   ```
-#' - Modify **NREMP and REMP parameters** using the sidebar panel.
-#' - Adjust **plot dimensions** dynamically.
-#' - If the data contains multiple subjects, select an **`ID`** from the dropdown.
+#' - **Minimum size**:
+#'   The shortest duration allowed (in epochs) to count as an NREMP/REMP.
 #'
 #' ## **Requirements**
 #' - The input **must be a `SleepCycle` object** created using the **Dude algorithm**.
-#' - The function **will throw an error** if:
-#'   - The input is missing.
-#'   - The input is **not a `SleepCycle` object**.
-#'   - The `SleepCycle` object **was not generated using the `dude` method**.
 #'
 #' @param sleepcycles_obj A **`SleepCycle` object** created using `sleepcycles_from_hypnogram()` with `method = "dude"`.
 #'
-#' @return A **Shiny app** that runs interactively for adjusting **Dude algorithm parameters**.
+#' @return A Shiny app that runs interactively for adjusting Dude algorithm parameters.
 #' @export
-#'
 #' @examples
 #' if (interactive()) {
-#'   sleepcycles_shiny_app(sleepcycles_obj)
+#'   data("hypnogram_grouped")
+#'   run_sleepcycles_app(
+#'    sleepcycles_from_hypnogram(
+#'      hypnogram_grouped,
+#'      epoch_col = "epoch",
+#'      stage_col = "stage",
+#'      id_col = "id",
+#'      verbose = FALSE
+#'    )
+#'  )
 #' }
 run_sleepcycles_app <- function(sleepcycles_obj) {
 
@@ -223,7 +197,7 @@ run_sleepcycles_app <- function(sleepcycles_obj) {
     newdata <- shiny::reactive({
       if (id_col_present) {
         shiny::req(input$id)
-        data_sub <- get_id(data, id = input$id)
+        data_sub <- get_id(data, .id = input$id)
       } else {
         data_sub <- data
       }

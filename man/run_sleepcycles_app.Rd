@@ -2,7 +2,7 @@
 % Please edit documentation in R/app_launcher.R
 \name{run_sleepcycles_app}
 \alias{run_sleepcycles_app}
-\title{Interactive Shiny App for Exploring SleepCycle Objects}
+\title{Interactive Shiny App for Exploring Sleep Cycles}
 \usage{
 run_sleepcycles_app(sleepcycles_obj)
 }
@@ -10,74 +10,45 @@ run_sleepcycles_app(sleepcycles_obj)
 \item{sleepcycles_obj}{A \strong{\code{SleepCycle} object} created using \code{sleepcycles_from_hypnogram()} with \code{method = "dude"}.}
 }
 \value{
-A \strong{Shiny app} that runs interactively for adjusting \strong{Dude algorithm parameters}.
+A Shiny app that runs interactively for adjusting Dude algorithm parameters.
 }
 \description{
-This function launches a Shiny app that allows users to \strong{interactively explore and modify sleep cycle detection parameters}
-using the \strong{Dude algorithm}. The app visualizes \strong{Non-REM Periods (NREMP)} and \strong{REM Periods (REMP)}
+This function launches a Shiny app that allows users to interactively explore and modify sleep cycle detection parameters
+using the Dude algorithm. The app visualizes Non-REM Periods (NREMP) REM Periods (REMP)
 while allowing users to adjust key parameters that control how sleep cycles are detected.
 }
 \details{
-\subsection{\strong{Dude Algorithm Parameters}}{
-
-The \strong{Dude algorithm} (Density-Based Sleep Cycle Detection) identifies sleep cycles based on \strong{density thresholds}
-and \strong{temporal continuity rules}. This app allows users to adjust the following parameters:
+The \strong{Dude algorithm} identifies sleep cycles based on density thresholds
+and temporal continuity rules. This app allows users to adjust the following NREMP and REMP parameters:
 \itemize{
-\item \strong{\verb{NREMP Density Column} (\code{nremp_density_col})}:
+\item \strong{Density variable}:
 The \strong{EEG feature} or \strong{sleep stage combination} used to measure Non-REM density.
-(Options depend on \code{sleepcycles_obj$info$method_opts$density_levels}).
-\item \strong{\verb{NREMP Threshold} (\code{nremp_threshold})}:
-A \strong{cutoff value (0.1 - 1.0)} that defines what constitutes a Non-REM Period.
-Increasing this value \strong{reduces false positives} but may exclude shorter NREMPs.
-\item \strong{\verb{NREMP Minimum Gap} (\code{nremp_min_gap})}:
-The \strong{minimum duration (in epochs) between two separate NREMPs}.
-If two NREMPs are closer than this, they are \strong{merged into one}.
-\item \strong{\verb{NREMP Minimum Size} (\code{nremp_min_size})}:
-The \strong{smallest possible NREMP duration (in epochs)}.
-Shorter NREMPs are \strong{filtered out} if they do not meet this criterion.
-\item \strong{\verb{REMP Density Column} (\code{remp_density_col})}:
-The \strong{EEG feature} or \strong{sleep stage combination} used to measure REM density.
-(Options depend on \code{sleepcycles_obj$info$method_opts$density_levels}).
-\item \strong{\verb{REMP Threshold} (\code{remp_threshold})}:
-A \strong{cutoff value (0.1 - 1.0)} that defines what constitutes a REM Period.
-Increasing this value \strong{filters out weak REM signals} but may exclude \strong{short REM episodes}.
-\item \strong{\verb{REMP Minimum Gap} (\code{remp_min_gap})}:
-The \strong{minimum duration (in epochs) between two separate REMPs}.
-If two REMPs are closer than this, they are \strong{merged into one}.
-\item \strong{\verb{REMP Minimum Size} (\code{remp_min_size})}:
-The \strong{smallest possible REMP duration (in epochs)}.
-Shorter REMPs are \strong{filtered out} if they do not meet this criterion.
+\item \strong{Density threshold}:
+A cutoff value (0.1 - 1.0) that defines what constitutes a Non-REM Period.
+Increasing this value increase specificity but may lower sensitivity.
+\item \strong{Minimum gap}:
+The minimum duration (in epochs) between two separate NREMP/REMPs.
+If two NREMPs are closer than this, they are merged into one.
+\item \strong{Minimum size}:
+The shortest duration allowed (in epochs) to count as an NREMP/REMP.
 }
-}
-
-\subsection{\strong{How to Use the Shiny App}}{
-\itemize{
-\item Run the function interactively:
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{if (interactive()) \{
-  sleepcycles_shiny_app(sleepcycles_obj)
-\}
-}\if{html}{\out{</div>}}
-\item Modify \strong{NREMP and REMP parameters} using the sidebar panel.
-\item Adjust \strong{plot dimensions} dynamically.
-\item If the data contains multiple subjects, select an \strong{\code{ID}} from the dropdown.
-}
-}
-
 \subsection{\strong{Requirements}}{
 \itemize{
 \item The input \strong{must be a \code{SleepCycle} object} created using the \strong{Dude algorithm}.
-\item The function \strong{will throw an error} if:
-\itemize{
-\item The input is missing.
-\item The input is \strong{not a \code{SleepCycle} object}.
-\item The \code{SleepCycle} object \strong{was not generated using the \code{dude} method}.
-}
 }
 }
 }
 \examples{
 if (interactive()) {
-  sleepcycles_shiny_app(sleepcycles_obj)
+  data("hypnogram_grouped")
+  run_sleepcycles_app(
+   sleepcycles_from_hypnogram(
+     hypnogram_grouped,
+     epoch_col = "epoch",
+     stage_col = "stage",
+     id_col = "id",
+     verbose = FALSE
+   )
+ )
 }
 }

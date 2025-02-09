@@ -4,12 +4,12 @@
 \alias{.handle_grouped_obj}
 \title{Handle Grouped SleepCycle Objects}
 \usage{
-.handle_grouped_obj(x, id)
+.handle_grouped_obj(x, .id)
 }
 \arguments{
 \item{x}{A \code{SleepCycle} object.}
 
-\item{id}{(Optional) The subject ID to extract. If \code{NULL}, the first subject is used.}
+\item{.id}{(Optional) The subject ID to extract. If \code{NULL}, the first subject is used.}
 }
 \value{
 A \strong{list} containing:
@@ -25,9 +25,9 @@ If the object is \strong{not grouped}, it returns the full dataset unchanged.
 }
 \details{
 \itemize{
-\item If \code{x} is \strong{grouped}, it extracts the sleep data for the specified \code{id}.
-\item If \code{id} is \code{NULL}, it defaults to the \strong{first available subject} and issues a warning.
-\item If \code{id} is not found, it throws an error.
+\item If \code{x} is \strong{grouped}, it extracts the sleep data for the specified \code{.id}.
+\item If \code{.id} is \code{NULL}, it defaults to the \strong{first available subject} and issues a warning.
+\item If \code{.id} is not found, it throws an error.
 }
 
 This function is used internally by plotting and processing functions that need to extract

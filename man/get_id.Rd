@@ -4,12 +4,12 @@
 \alias{get_id}
 \title{Extract a Single Subject's Data from a Grouped SleepCycle Object}
 \usage{
-get_id(sleepcycle_obj, id)
+get_id(sleepcycle_obj, .id)
 }
 \arguments{
 \item{sleepcycle_obj}{An object of class \code{"SleepCycle"} that contains \strong{multiple IDs}.}
 
-\item{id}{The subject ID to extract from \code{sleepcycle_obj}. Must be present in the grouped dataset.}
+\item{.id}{The subject ID to extract from \code{sleepcycle_obj}. Must be present in the grouped dataset.}
 }
 \value{
 A new \code{"SleepCycle"} object containing data \strong{only for the selected subject}, including:

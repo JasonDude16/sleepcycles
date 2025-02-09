@@ -15,10 +15,8 @@
 #' @param overlay_clrs Color palette for cycle overlays.
 #'
 #' @return A `ggplot` object.
-#'
-#' @importFrom rlang .data
-#'
 #' @export
+#' @importFrom rlang .data
 #' @rdname sleep_plots
 plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overlay_cycles = TRUE, overlay_clrs = c("#3B528BFF", "#5DC863FF")) {
 
@@ -26,7 +24,7 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
-  x <- .handle_grouped_obj(sleepcycle_obj, id)
+  x <- .handle_grouped_obj(sleepcycle_obj, .id = id)
   stage_col <- x$info$stage_col
   epoch_col <- x$info$epoch_col
 
@@ -103,7 +101,7 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
     stop("The `dude` algorithm must be used to plot densities!")
   }
 
-  x <- .handle_grouped_obj(sleepcycle_obj, id)
+  x <- .handle_grouped_obj(sleepcycle_obj, .id = id)
   opts <- x$info$method_opts
 
   if (is.null(include_levels)) {
@@ -176,7 +174,7 @@ plot_cycles <- function(sleepcycle_obj, id = NULL) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
   }
 
-  x <- .handle_grouped_obj(sleepcycle_obj, id)
+  x <- .handle_grouped_obj(sleepcycle_obj, .id = id)
 
   x_nc <- x$epoch |>
     dplyr::filter(is.na(.data$cycle_type)) |>

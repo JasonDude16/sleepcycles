@@ -6,8 +6,8 @@
 \usage{
 sleepcycles_from_hypnogram(
   df,
-  epoch_col = NULL,
-  stage_col = NULL,
+  epoch_col,
+  stage_col,
   method = "dude",
   options = list(),
   id_col = NULL,

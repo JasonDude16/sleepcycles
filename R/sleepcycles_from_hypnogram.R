@@ -52,7 +52,7 @@
 #' @importFrom rlang .data
 #'
 #' @export
-sleepcycles_from_hypnogram <- function(df, epoch_col = NULL, stage_col = NULL, method = "dude", options = list(), id_col = NULL, verbose = TRUE) {
+sleepcycles_from_hypnogram <- function(df, epoch_col, stage_col, method = "dude", options = list(), id_col = NULL, verbose = TRUE) {
 
   stopifnot(method %in% c("dude", "feinberg"))
 
