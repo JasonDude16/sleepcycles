@@ -6,22 +6,18 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-**Analyze, Detect, and Visualize Sleep Cycles with Ease.**
+The `sleepcycles` package provides tools for detecting, analyzing, and
+visualizing sleep cycles from hypnogram data using density-based and
+rule-based (Feinberg) algorithms. It supports both single- and
+multi-subject hypnograms, enabling users to extract and explore Non-REM
+(NREMP) and REM (REMP) periods with flexible parameter settings. The
+package includes an interactive Shiny application, a suite of
+visualization functions and utilities validating sleep staging data.
 
-The **sleepcycles** package provides tools for detecting, analyzing, and
-visualizing **sleep cycles** from hypnogram data using **density-based
-(DUDE) and rule-based (Feinberg) algorithms**. It supports both
-**single-subject** and **grouped** datasets, enabling users to extract
-and explore **Non-REM (NREMP) and REM (REMP) periods** with flexible
-parameter settings. The package includes **interactive Shiny
-applications**, a suite of **visualization functions** (e.g.,
-hypnograms, density plots, and cycle summaries), and utilities for
-**preprocessing and validating sleep staging data**.
-
-📌 **Designed for sleep researchers, clinicians, and data scientists,
+📌 Designed for sleep researchers, clinicians, and data scientists,
 `sleepcycles` helps uncover the underlying dynamics of sleep
-architecture and assess the impact of sleep patterns on health and
-performance.**
+architecture and assess the impact of sleep patterns in healthy and
+clinical populations.
 
 ------------------------------------------------------------------------
 
@@ -37,15 +33,15 @@ install.packages("remotes")
 remotes::install_github("yourusername/sleepcycles")
 ```
 
-🚀 Quick Start Guide
+## 🚀 Quick Start Guide
 
-1️⃣ Load the Package
+#### 1️⃣ Load the Package
 
 ``` r
 library(sleepcycles)
 ```
 
-2️⃣ Load Example Data
+#### 2️⃣ Load Example Data
 
 ``` r
 data("hypnogram_single", package = "sleepcycles")
@@ -61,9 +57,10 @@ head(hypnogram_single)
 #> 6     6     W
 ```
 
-3️⃣ Detect Sleep Cycles
+#### 3️⃣ Detect Sleep Cycles
 
 ``` r
+# warnings expected
 sleepcycles_obj <- sleepcycles_from_hypnogram(
   hypnogram_single, 
   epoch_col = "epoch", 
@@ -79,7 +76,7 @@ sleepcycles_obj <- sleepcycles_from_hypnogram(
 #> Warning: NREMP and REMP overlap (844-946). Splitting NREMP and keeping REMP...
 ```
 
-4️⃣ Visualize Sleep Cycles
+#### 4️⃣ Visualize Sleep Cycles
 
 ``` r
 plot_summary(sleepcycles_obj)
@@ -87,7 +84,7 @@ plot_summary(sleepcycles_obj)
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
-5️⃣ Run the Interactive Shiny App
+#### 5️⃣ Run the Interactive Shiny App
 
 ``` r
 if (interactive()) {
@@ -95,14 +92,19 @@ if (interactive()) {
 }
 ```
 
-📊 Features ✔ Sleep Cycle Detection: Supports DUDE (Density-Based) and
-Feinberg (Rule-Based) algorithms ✔ Interactive Visualization: Generate
-hypnograms, density plots, and cycle summaries ✔ Shiny App: Modify and
-explore cycle detection parameters interactively ✔ Preprocessing &
-Validation: Built-in data validation tools ✔ Single and Grouped Data
-Support: Works with individual and multi-subject datasets
+### 📊 Features
 
-📖 Available Functions
+- ✔ **Sleep Cycle Detection**: Supports DUDE (Density-Based) and
+  Feinberg (Rule-Based) algorithms
+- ✔ **Interactive Visualization**: Generate hypnograms, density plots,
+  and cycle summaries
+- ✔ **Shiny App**: Modify and explore cycle detection parameters
+  interactively
+- ✔ **Preprocessing & Validation**: Built-in data validation tools
+- ✔ **Single and Grouped Data Support**: Works with individual and
+  multi-subject hypnogram datasets
+
+### 📖 Available Functions
 
 | **Function**                   | **Description**                                         |
 |--------------------------------|---------------------------------------------------------|
@@ -114,7 +116,9 @@ Support: Works with individual and multi-subject datasets
 | `run_sleepcycles_app()`        | Launches an interactive Shiny app for cycle exploration |
 | `check_hypnogram()`            | Validates hypnogram data for errors                     |
 
-📚 Example Datasets The package includes two example datasets:
+### 📚 Example Datasets
+
+The package includes two example datasets:
 
 | **Dataset**         | **Description**                                 |
 |---------------------|-------------------------------------------------|
@@ -126,10 +130,11 @@ data("hypnogram_single", package = "sleepcycles")
 data("hypnogram_grouped", package = "sleepcycles")
 ```
 
-📌 Contributing We welcome contributions! If you find a bug, please
-[open an issue](https://github.com/JasonDude16/sleepcycles/issues).
+### 📌 Contributing
 
-📜 License This package is licensed under the MIT License.
+We welcome contributions! If you find a bug, please [open an
+issue](https://github.com/JasonDude16/sleepcycles/issues).
 
-📞 Contact 📧 Jason Dude 🔗
-\[GitHub\]\[<https://github.com/JasonDude16>\] 🐦 Your Twitter Handle
+### 📜 License
+
+This package is licensed under the MIT License.
