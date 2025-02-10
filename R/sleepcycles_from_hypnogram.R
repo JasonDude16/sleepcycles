@@ -76,10 +76,10 @@ sleepcycles_from_hypnogram <- function(df, epoch_col, stage_col, method = "dude"
   }
 
   if (method == "dude") {
-    FUN <- match.fun(".sleepcycles_from_hypnogram_dude")
+    FUN <- .sleepcycles_from_hypnogram_dude
 
   } else if (method == "feinberg") {
-    FUN <- match.fun(".sleepcycles_from_hypnogram_feinberg")
+    FUN <- .sleepcycles_from_hypnogram_feinberg
 
   }
 
