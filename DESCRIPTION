@@ -1,9 +1,8 @@
 Package: sleepcycles
 Title: Detection and Visualization of Sleep Cycles from Hypnogram Data
 Version: 0.0.0.9000
-Authors@R: 
-    person("Jason", "Dude", , "jasondude16@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-1783-7224"))
+Author: Jason Dude [aut, cre]
+Maintainer: Jason Dude <jasondude16@gmail.com>
 Description: The sleepcycles package provides tools for detecting, analyzing, and visualizing sleep cycles from hypnogram data using density-based and rule-based (Feinberg) algorithms. It supports both single- and multi-subject hypnograms, enabling users to extract and explore Non-REM (NREMP) and REM (REMP) periods with flexible parameter settings. The package includes an interactive Shiny application, a suite of visualization functions and utilities validating sleep staging data. 
 License: MIT + file LICENSE
 Encoding: UTF-8
