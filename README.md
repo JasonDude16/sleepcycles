@@ -45,8 +45,6 @@ library(sleepcycles)
 
 ``` r
 data("hypnogram_single", package = "sleepcycles")
-
-# Preview the dataset
 head(hypnogram_single)
 #>   epoch stage
 #> 1     1     W
@@ -118,12 +116,9 @@ if (interactive()) {
 
 ### 📚 Example Datasets
 
-The package includes two example datasets:
-
-| **Dataset**         | **Description**                                 |
-|---------------------|-------------------------------------------------|
-| `hypnogram_single`  | Example hypnogram data for a single individual  |
-| `hypnogram_grouped` | Example hypnogram data for multiple individuals |
+The package includes two example datasets: `hypnogram_single` and
+`hypnogram_grouped`, containing single and multi-subject hypnogram
+datasets, respectively.
 
 ``` r
 data("hypnogram_single", package = "sleepcycles")
