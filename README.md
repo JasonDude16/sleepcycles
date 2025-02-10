@@ -34,7 +34,7 @@ You can install the development version from GitHub using `{remotes}`:
 install.packages("remotes")
 
 # Install sleepcycles from GitHub
-remotes::install_github("yourusername/sleepcycles")
+remotes::install_github("jasondude16/sleepcycles")
 ```
 
 ## 🚀 Quick Start Guide
