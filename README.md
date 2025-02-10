@@ -3,8 +3,12 @@
 
 # sleepcycles: Detect and Visualize Sleep Cycles from Hypnograms
 
-<!-- badges: start -->
-<!-- badges: end -->
+![Build
+Status](https://github.com/yourusername/sleepcycles/workflows/R-CMD-check/badge.svg)
+![GitHub
+release](https://img.shields.io/github/v/release/jasondude16/sleepcycles)
+![License:
+MIT](https://img.shields.io/github/license/yourusername/sleepcycles)
 
 The `sleepcycles` package provides tools for detecting, analyzing, and
 visualizing sleep cycles from hypnogram data using density-based and
