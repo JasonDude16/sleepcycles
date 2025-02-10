@@ -15,5 +15,26 @@ plot_summary(sleepcycle_obj, id = NULL)
 A grid of \code{ggplot} objects.
 }
 \description{
-This function generates a combined visualization of a hypnogram, sleep cycles, and, if using the 'dude' algorithm, cycle densities.
+This function generates a combined visualization of a hypnogram, sleep cycles, and, if using the 'dude' method for sleep cycles estimates, cycle densities.
+}
+\examples{
+data("hypnogram_single")
+plot_summary(
+  sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    method = "dude",
+    verbose = FALSE
+  )
+)
+plot_summary(
+  sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    method = "feinberg",
+    verbose = FALSE
+  )
+)
 }

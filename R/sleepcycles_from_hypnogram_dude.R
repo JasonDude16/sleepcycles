@@ -90,7 +90,6 @@
 
 }
 
-
 .check_sleepcycles_dude <- function(df, stage_col, options) {
 
   valid_option_args <- c("sleep_levels", "combos", "NREMP", "REMP", "kernel")
@@ -141,7 +140,6 @@
 
 }
 
-
 .binarize_levels <- function(df, epoch_col, stage_col) {
   res <- list()
   res[[epoch_col]] <- df[[epoch_col]]
@@ -152,13 +150,11 @@
   return(data.frame(res))
 }
 
-
 .gaussian_kernel <- function(size, sigma) {
   x <- seq(-floor(size / 2), floor(size / 2), length.out = size)
   kernel <- exp(-0.5 * (x / sigma)^2)
   return(kernel / sum(kernel))
 }
-
 
 .convolve_with_padding <- function(signal, kernel) {
 
@@ -177,7 +173,6 @@
 
   return(convolved_signal)
 }
-
 
 .class_density <- function(df, epoch_col, stage_col, options) {
 
@@ -200,7 +195,6 @@
 
   return(res)
 }
-
 
 .cluster_segments <- function(df, epoch_col, stage_col, options) {
 
@@ -277,7 +271,6 @@
 
   return(res)
 }
-
 
 .handle_overlapping_cycles <- function(x) {
 

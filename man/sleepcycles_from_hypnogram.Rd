@@ -86,3 +86,8 @@ Then, based on the chosen \strong{method}, it calls either \code{.sleepcycles_fr
 
 If \code{id_col} is provided, the function runs the cycle detection \strong{independently for each subject} and combines the results.
 }
+\references{
+Feinberg, I., March, J. D., Floyd, T. C., Jimison, R., Bossom-Demitrack, L., & Katz, P. H. (1978).
+Sleep cycle dynamics and REM sleep regulation. \emph{Science, 201}(4352), 625-627.
+\doi{10.1126/science.663657}
+}

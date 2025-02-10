@@ -36,7 +36,7 @@ plot_cycles(sleepcycle_obj, id = NULL)
 
 \item{overlay_clrs}{Color palette for cycle overlays.}
 
-\item{include_levels}{(Optional) Specifies which density levels to plot in \code{plot_densities()}.}
+\item{include_levels}{(Optional) Specifies which densities to plot in \code{plot_densities()}.}
 
 \item{clrs}{Color palette for different sleep states.}
 }
@@ -44,12 +44,40 @@ plot_cycles(sleepcycle_obj, id = NULL)
 A \code{ggplot} object.
 }
 \description{
-These functions generate plots related to sleep cycles from a \code{SleepCycle} object.
+These functions generate plots related to sleep cycles from a \code{SleepCycle} object (can be single- or multi-subject).
 }
 \details{
 \itemize{
-\item \code{plot_hypnogram()}: Creates a hypnogram of sleep stages over time.
+\item \code{plot_hypnogram()}: Plot a standard hypnogram.
 \item \code{plot_densities()}: Plots density estimates of sleep stages.
-\item \code{plot_cycles()}: Visualizes the structure of sleep cycles.
+\item \code{plot_cycles()}: Plots NREM and REM cycles, as well as non-cycle segments (labeled NC on plot).
 }
+}
+\examples{
+data("hypnogram_single")
+plot_hypnogram(
+  sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    verbose = FALSE
+  )
+)
+plot_densities(
+  sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    verbose = FALSE,
+    method = "dude"
+  )
+)
+plot_cycles(
+  sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    verbose = FALSE
+  )
+)
 }

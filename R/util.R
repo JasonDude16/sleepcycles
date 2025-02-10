@@ -39,30 +39,6 @@ get_id <- function(sleepcycle_obj, .id) {
   return(x)
 }
 
-
-#' Handle Grouped SleepCycle Objects
-#'
-#' This internal function extracts a specific subject's sleep data from a grouped `SleepCycle` object.
-#' If the object is **not grouped**, it returns the full dataset unchanged.
-#'
-#' - If `x` is **grouped**, it extracts the sleep data for the specified `.id`.
-#' - If `.id` is `NULL`, it defaults to the **first available subject** and issues a warning.
-#' - If `.id` is not found, it throws an error.
-#'
-#' @param x A `SleepCycle` object.
-#' @param .id (Optional) The subject ID to extract. If `NULL`, the first subject is used.
-#'
-#' @return A **list** containing:
-#'   - `"epoch"`: Per-epoch sleep staging data.
-#'   - `"summary"`: Summary statistics for the subject (or full dataset if not grouped).
-#'   - `"info"`: Metadata about the `SleepCycle` object.
-#'
-#' @details
-#' This function is used internally by plotting and processing functions that need to extract
-#' data for a single subject when working with grouped `SleepCycle` objects.
-#'
-#' @keywords internal
-#' @rdname handle_grouped_obj
 .handle_grouped_obj <- function(x, .id) {
 
   if (x$info$is_grouped) {

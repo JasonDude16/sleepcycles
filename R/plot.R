@@ -1,15 +1,15 @@
 #' Sleep Cycle Visualization Functions
 #'
-#' These functions generate plots related to sleep cycles from a `SleepCycle` object.
+#' These functions generate plots related to sleep cycles from a `SleepCycle` object (can be single- or multi-subject).
 #'
-#' - `plot_hypnogram()`: Creates a hypnogram of sleep stages over time.
+#' - `plot_hypnogram()`: Plot a standard hypnogram.
 #' - `plot_densities()`: Plots density estimates of sleep stages.
-#' - `plot_cycles()`: Visualizes the structure of sleep cycles.
+#' - `plot_cycles()`: Plots NREM and REM cycles, as well as non-cycle segments (labeled NC on plot).
 #'
 #' @param sleepcycle_obj An object of class `SleepCycle`.
 #' @param id (Optional) A subject identifier for grouped objects.
 #' @param stage_order (Optional) Reorders sleep stages in `plot_hypnogram()`.
-#' @param include_levels (Optional) Specifies which density levels to plot in `plot_densities()`.
+#' @param include_levels (Optional) Specifies which densities to plot in `plot_densities()`.
 #' @param overlay_cycles Logical. If `TRUE`, overlays sleep cycles on the plots.
 #' @param clrs Color palette for different sleep states.
 #' @param overlay_clrs Color palette for cycle overlays.
@@ -18,6 +18,34 @@
 #' @export
 #' @importFrom rlang .data
 #' @rdname sleep_plots
+#'
+#' @examples
+#' data("hypnogram_single")
+#' plot_hypnogram(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_single,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     verbose = FALSE
+#'   )
+#' )
+#' plot_densities(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_single,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     verbose = FALSE,
+#'     method = "dude"
+#'   )
+#' )
+#' plot_cycles(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_single,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     verbose = FALSE
+#'   )
+#' )
 plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overlay_cycles = TRUE, overlay_clrs = c("#3B528BFF", "#5DC863FF")) {
 
   if (!inherits(sleepcycle_obj, "SleepCycle")) {
@@ -86,7 +114,6 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
   return(p)
 
 }
-
 
 #' @export
 #' @importFrom rlang .data
@@ -164,7 +191,6 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
   return(p)
 }
 
-
 #' @export
 #' @importFrom rlang .data
 #' @rdname sleep_plots
@@ -210,16 +236,36 @@ plot_cycles <- function(sleepcycle_obj, id = NULL) {
   return(p)
 }
 
-
 #' Summary of Sleep Cycle Plots
 #'
-#' This function generates a combined visualization of a hypnogram, sleep cycles, and, if using the 'dude' algorithm, cycle densities.
+#' This function generates a combined visualization of a hypnogram, sleep cycles, and, if using the 'dude' method for sleep cycles estimates, cycle densities.
 #'
 #' @param sleepcycle_obj An object of class `SleepCycle`.
 #' @param id (Optional) A subject identifier for grouped objects.
 #'
 #' @return A grid of `ggplot` objects.
 #' @export
+#'
+#' @examples
+#' data("hypnogram_single")
+#' plot_summary(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_single,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     method = "dude",
+#'     verbose = FALSE
+#'   )
+#' )
+#' plot_summary(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_single,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     method = "feinberg",
+#'     verbose = FALSE
+#'   )
+#' )
 plot_summary <- function(sleepcycle_obj, id = NULL) {
 
   if (!inherits(sleepcycle_obj, "SleepCycle")) {
@@ -240,7 +286,6 @@ plot_summary <- function(sleepcycle_obj, id = NULL) {
   gridExtra::grid.arrange(grobs = plots)
 }
 
-
 #' Grouped Sleep Cycle Visualization
 #'
 #' These functions visualize sleep cycle statistics across multiple subjects.
@@ -255,6 +300,29 @@ plot_summary <- function(sleepcycle_obj, id = NULL) {
 #' @export
 #' @importFrom rlang .data
 #' @rdname sleep_group_plots
+#'
+#' @examples
+#' data("hypnogram_grouped")
+#' plot_ids(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_grouped,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     method = "dude",
+#'     id_col = "id",
+#'     verbose = FALSE
+#'   )
+#' )
+#' plot_cycle_counts(
+#'   sleepcycles_from_hypnogram(
+#'     hypnogram_grouped,
+#'     epoch_col = "epoch",
+#'     stage_col = "stage",
+#'     method = "dude",
+#'     id_col = "id",
+#'     verbose = FALSE
+#'   )
+#' )
 plot_ids <- function(sleepcycle_obj) {
 
   if (!inherits(sleepcycle_obj, "SleepCycle")) {
@@ -289,7 +357,6 @@ plot_ids <- function(sleepcycle_obj) {
   return(p)
 
 }
-
 
 #' @export
 #' @importFrom rlang .data

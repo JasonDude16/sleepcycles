@@ -1,24 +1,3 @@
-#' Detect Sleep Cycles Using the Feinberg Algorithm
-#'
-#' This function applies the Feinberg sleep cycle detection algorithm to segment sleep
-#' cycles from a hypnogram dataset.
-#'
-#' @param df A data frame containing epoch-level sleep stage data.
-#' @param epoch_col The column name in `df` that contains the epoch numbers.
-#' @param stage_col The column name in `df` that contains sleep stage classifications.
-#' @param options A list of parameters for customizing the Feinberg algorithm:
-#'   - `sleepstart` (default = "N1"): Determines how sleep onset is defined.
-#'   - `treat_as_W` (default = "A"): Reclassifies certain stages as wake ("W").
-#'   - `rm_incomplete_period` (default = FALSE): Whether to remove incomplete sleep periods.
-#'   - `REMP_length` (default = 10): Minimum number of epochs for a valid REM period.
-#'   - `sleep_levels` (default = c("N1", "N2", "N3", "R")): Defines sleep stage categories.
-#'
-#' @return A list containing:
-#'   - `epoch`: A data frame with cycle annotations for each epoch.
-#'   - `summary`: A summary of detected sleep cycles.
-#'   - `info`: The options used in the analysis.
-#'
-#' @keywords internal
 .sleepcycles_from_hypnogram_feinberg <- function(df, epoch_col, stage_col, options = list()) {
 
   # Set default options if not provided
@@ -89,7 +68,6 @@
   return(list("epoch" = df_epoch, "summary" = df_sc, "info" = options))
 }
 
-
 .prep_data <- function(df, stage_col, treat_as_W) {
 
   # Reclassify specified stage as wake
@@ -110,8 +88,6 @@
   return(df)
 }
 
-
-
 .find_NREMPs <- function (NREMWs, data) {
   NREMWs_start <- NA
   for (k in 1:(length(NREMWs) - 29)) {
@@ -131,7 +107,6 @@
   }
   return(NREMWs_start2)
 }
-
 
 .find_REMPs <- function (REMP_length, data) {
   REMs <- which(data$Descr3 == "REM")
@@ -156,7 +131,6 @@
   return(REMs_start2)
 }
 
-
 .delete_reps <- function (data) {
   rm <- NA
   cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
@@ -168,7 +142,6 @@
   rm <- rm[c(-1)]
   return(rm)
 }
-
 
 .is.toolong <- function (data) {
 
@@ -210,7 +183,6 @@
 
   return(toolong)
 }
-
 
 .toolong_split <- function (data, toolong, stage_col) {
   for (zz in 1:length(toolong)) {
@@ -359,7 +331,6 @@
   return(data)
 }
 
-
 .addinfo1 <- function (data) {
   NREMPs <- which(data$CycleStart == "NREMP")
   data$cycles <- NA
@@ -393,7 +364,6 @@
   }
   return(data)
 }
-
 
 .rm.incompleteperiod <- function (data) {
   cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
@@ -433,7 +403,6 @@
   }
   return(data)
 }
-
 
 .clean_endofnight <- function (data) {
   cycs <- which(data$CycleStart == "NREMP" | data$CycleStart == "REMP")
@@ -519,7 +488,6 @@
   }
   return(data)
 }
-
 
 .get_cycle_segments <- function(df, epoch_col) {
   n_cycles <- length(setdiff(unique(df$cycle), NA))

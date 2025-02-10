@@ -28,3 +28,26 @@ These functions visualize sleep cycle statistics across multiple subjects.
 \item \code{plot_cycle_counts()}: Plots a bar chart of cycle counts.
 }
 }
+\examples{
+data("hypnogram_grouped")
+plot_ids(
+  sleepcycles_from_hypnogram(
+    hypnogram_grouped,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    method = "dude",
+    id_col = "id",
+    verbose = FALSE
+  )
+)
+plot_cycle_counts(
+  sleepcycles_from_hypnogram(
+    hypnogram_grouped,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    method = "dude",
+    id_col = "id",
+    verbose = FALSE
+  )
+)
+}

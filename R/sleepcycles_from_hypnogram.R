@@ -49,6 +49,11 @@
 #'
 #' If `id_col` is provided, the function runs the cycle detection **independently for each subject** and combines the results.
 #'
+#' @references
+#' Feinberg, I., March, J. D., Floyd, T. C., Jimison, R., Bossom-Demitrack, L., & Katz, P. H. (1978).
+#' Sleep cycle dynamics and REM sleep regulation. *Science, 201*(4352), 625-627.
+#' \doi{10.1126/science.663657}
+#'
 #' @importFrom rlang .data
 #'
 #' @export
@@ -138,22 +143,6 @@ sleepcycles_from_hypnogram <- function(df, epoch_col, stage_col, method = "dude"
 
 }
 
-
-#' Internal Hypnogram Validation Function
-#'
-#' This function is used internally by `check_hypnogram()` to validate individual hypnograms.
-#' It checks for:
-#' - Missing values in `stage_col` or `epoch_col`
-#' - Non-sequential or non-numeric `epoch_col`
-#' - Invalid sleep stage labels
-#'
-#' @param df A data frame containing sleep data.
-#' @param epoch_col The column name for sleep epochs.
-#' @param stage_col The column name for sleep stages.
-#' @param valid_levels A vector of allowed sleep stages. Default: `c("N3", "N2", "N1", "R", "W", "A")`.
-#'
-#' @return Returns `NULL` if no issues are found. Otherwise, an error is thrown.
-#' @keywords internal
 .check_hypnogram_base <- function(df, epoch_col, stage_col, valid_levels = c("N3", "N2", "N1", "R", "W", "A")) {
 
   stopifnot(
@@ -203,7 +192,6 @@ sleepcycles_from_hypnogram <- function(df, epoch_col, stage_col, method = "dude"
   }
 
 }
-
 
 #' Validate a Hypnogram Data Frame
 #'
