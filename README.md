@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml)
-[!GitHub
+![GitHub
 release](https://img.shields.io/github/v/release/JasonDude16/sleepcycles)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
