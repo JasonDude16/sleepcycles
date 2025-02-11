@@ -4,13 +4,12 @@ library(testthat)
 
 test_that("sleepcycles_from_hypnogram-single-dude works correctly", {
   data("hypnogram_single", package = "sleepcycles")
-  result <- suppressWarnings(
-    sleepcycles_from_hypnogram(
-      hypnogram_single,
-      epoch_col = "epoch",
-      stage_col = "stage",
-      method = "dude"
-    )
+  result <- sleepcycles_from_hypnogram(
+    hypnogram_single,
+    epoch_col = "epoch",
+    stage_col = "stage",
+    method = "dude",
+    verbose = FALSE
   )
   expect_s3_class(result, "SleepCycle")
   expect_true("epoch" %in% names(result))
@@ -56,8 +55,9 @@ test_that("sleepcycles_from_hypnogram-dude handles REM only", {
     captured_warnings
   })
   expected_warnings <- c(
-    "One of the combo levels (N2) is not present in hypnogram",
-    "One of the combo levels (N3) is not present in hypnogram",
+    "One of the combo levels (N1) is not present in hypnogram, ignoring",
+    "One of the combo levels (N2) is not present in hypnogram, ignoring",
+    "One of the combo levels (N3) is not present in hypnogram, ignoring",
     "No NREMP periods were found"
   )
   expect_setequal(warnings, expected_warnings)
@@ -70,7 +70,7 @@ test_that("sleepcycles_from_hypnogram-dude handles REM only", {
 })
 
 test_that("sleepcycles_from_hypnogram-dude handles NREM only", {
-  df <- data.frame(epoch = 1:50, stage = sample(c("N2", "N3"), size = 50, replace = TRUE))
+  df <- data.frame(epoch = 1:50, stage = sample(c("N1", "N2", "N3"), size = 50, replace = TRUE))
   expect_warning(
     sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage", method = "dude"),
     "No REMP periods were found"
@@ -78,7 +78,7 @@ test_that("sleepcycles_from_hypnogram-dude handles NREM only", {
 })
 
 test_that("sleepcycles_from_hypnogram-dude handles no detected events gracefully", {
-  df <- data.frame(epoch = 1:50, stage = rep("N1", 50))
+  df <- data.frame(epoch = 1:50, stage = rep("W", 50))
   warnings <- suppressWarnings({
     captured_warnings <- character()
     result <- withCallingHandlers(
@@ -91,8 +91,9 @@ test_that("sleepcycles_from_hypnogram-dude handles no detected events gracefully
     captured_warnings
   })
   expected_warnings <- c(
-    "One of the combo levels (N2) is not present in hypnogram",
-    "One of the combo levels (N3) is not present in hypnogram",
+    "One of the combo levels (N1) is not present in hypnogram, ignoring",
+    "One of the combo levels (N2) is not present in hypnogram, ignoring",
+    "One of the combo levels (N3) is not present in hypnogram, ignoring",
     "No NREMP or REMP periods were found, skipping..."
   )
   expect_setequal(warnings, expected_warnings)
@@ -117,25 +118,7 @@ test_that("sleepcycles_from_hypnogram-dude validates `options` list", {
       stage_col = "stage",
       method = "dude",
       options = list("sleep_levels" = "N0")
-    ), "`sleep_levels` must only contain levels that are in `stage_col`"
-  )
-  expect_error(
-    sleepcycles_from_hypnogram(
-      df,
-      epoch_col = "epoch",
-      stage_col = "stage",
-      method = "dude",
-      options = list("combos" = list("N0" = "N0"))
-    ), "`combos` must be a named list, and all list items must contain levels that are in `stage_col`"
-  )
-  expect_error(
-    sleepcycles_from_hypnogram(
-      df,
-      epoch_col = "epoch",
-      stage_col = "stage",
-      method = "dude",
-      options = list("combos" = list("N0"))
-    ), "`combos` must be a named list"
+    ), "`sleep_levels` can only contain valid stage levels: N3, N2, N1, R, W, A"
   )
   expect_error(
     sleepcycles_from_hypnogram(
@@ -201,7 +184,7 @@ test_that("sleepcycles_from_hypnogram does not allow missing values in stage_col
   df <- data.frame(epoch = c(1, 2, 3), stage = c("W", NA, "W"))
   expect_error(
     sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage"),
-    "stage contains missing values, please fix."
+    "`stage` contains missing values, please fix."
   )
 })
 
@@ -209,7 +192,7 @@ test_that("sleepcycles_from_hypnogram must have valid levels in stage_col", {
   df <- data.frame(epoch = c(1, 2, 3), stage = c("W", "B", "W"))
   expect_error(
     sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage"),
-    "stage contains invalid levels: B"
+    "`stage` contains invalid levels: B"
   )
 })
 
@@ -217,7 +200,7 @@ test_that("sleepcycles_from_hypnogram cannot have missing epochs", {
   df <- data.frame(epoch = c(1, NA, 3), stage = rep("W", 3))
   expect_error(
     sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage"),
-    "epoch has missing values, please fix."
+    "`epoch` has missing values, please fix."
   )
 })
 
@@ -225,7 +208,7 @@ test_that("sleepcycles_from_hypnogram does not have duplicated epochs", {
   df <- data.frame(epoch = c(1, 1, 2), stage = rep("W", 3))
   expect_error(
     sleepcycles_from_hypnogram(df, epoch_col = "epoch", stage_col = "stage"),
-    "epoch contains duplicated epochs, please fix."
+    "`epoch` contains duplicated epochs, please fix."
   )
 })
 

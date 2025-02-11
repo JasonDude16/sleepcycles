@@ -4,7 +4,14 @@
 \alias{check_hypnogram}
 \title{Validate a Hypnogram Data Frame}
 \usage{
-check_hypnogram(df, epoch_col, stage_col, id_col = NULL, on_error = "stop")
+check_hypnogram(
+  df,
+  epoch_col,
+  stage_col,
+  id_col = NULL,
+  valid_levels = c("N3", "N2", "N1", "R", "W", "A"),
+  on_error = "stop"
+)
 }
 \arguments{
 \item{df}{A data frame containing the hypnogram.}
@@ -14,6 +21,8 @@ check_hypnogram(df, epoch_col, stage_col, id_col = NULL, on_error = "stop")
 \item{stage_col}{The column name representing sleep stages.}
 
 \item{id_col}{(Optional) A column representing subject IDs for grouped data. If provided, validation runs separately for each subject.}
+
+\item{valid_levels}{valid stage levels you would like to check against when validating the hypnogram.}
 
 \item{on_error}{Defines error handling behavior:
 \itemize{

@@ -32,18 +32,18 @@ sleepcycles_from_hypnogram(
 \item \strong{DUDE Algorithm Options}:
 \itemize{
 \item \code{"sleep_levels"}: Vector of valid sleep stages (default: \code{c("N1", "N2", "N3", "R")}).
-\item \code{"combos"}: Defines merged stages (e.g., \code{list("N2_N3" = c("N2", "N3"))}).
+\item \code{"combos"}: Defines merged stages (e.g., \code{list("N1_N2_N3" = c("N1", "N2", "N3"))}).
 \item \code{"NREMP"}: Named list defining \strong{NREM Period (NREMP) detection} parameters:
 \itemize{
-\item \code{"density_col"}: Column used for NREMP detection (default: \code{"N2_N3"}).
-\item \code{"threshold"}: Threshold for cycle classification (default: \code{0.5}).
+\item \code{"density_col"}: Column used for NREMP detection (default: \code{"N1_N2_N3"}).
+\item \code{"threshold"}: Threshold for cycle classification (default: \code{0.8}).
 \item \code{"min_gap"}: Minimum gap between cycles (default: \code{20} epochs).
-\item \code{"min_size"}: Minimum cycle duration (default: \code{20} epochs).
+\item \code{"min_size"}: Minimum cycle duration (default: \code{40} epochs).
 }
 \item \code{"REMP"}: Named list defining \strong{REM Period (REMP) detection} parameters:
 \itemize{
 \item \code{"density_col"}: Column used for REMP detection (default: \code{"R"}).
-\item \code{"threshold"}: Threshold for cycle classification (default: \code{0.5}).
+\item \code{"threshold"}: Threshold for cycle classification (default: \code{0.3}).
 \item \code{"min_gap"}: Minimum gap between cycles (default: \code{15} epochs).
 \item \code{"min_size"}: Minimum cycle duration (default: \code{10} epochs).
 }
@@ -87,7 +87,5 @@ Then, based on the chosen \strong{method}, it calls either \code{.sleepcycles_fr
 If \code{id_col} is provided, the function runs the cycle detection \strong{independently for each subject} and combines the results.
 }
 \references{
-Feinberg, I., March, J. D., Floyd, T. C., Jimison, R., Bossom-Demitrack, L., & Katz, P. H. (1978).
-Sleep cycle dynamics and REM sleep regulation. \emph{Science, 201}(4352), 625-627.
-\doi{10.1126/science.663657}
+Feinberg, I., & Floyd, T. C. (1979). Systematic trends across the night in human sleep cycles. Psychophysiology, 16(3), 283-291.
 }
