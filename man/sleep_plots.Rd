@@ -17,10 +17,8 @@ plot_hypnogram(
 plot_densities(
   sleepcycle_obj,
   id = NULL,
-  include_levels = NULL,
   clrs = c("#3B528BFF", "#5DC863FF"),
-  overlay_cycles = TRUE,
-  overlay_clrs = clrs
+  overlay_cycles = TRUE
 )
 
 plot_cycles(sleepcycle_obj, id = NULL)
@@ -35,8 +33,6 @@ plot_cycles(sleepcycle_obj, id = NULL)
 \item{overlay_cycles}{Logical. If \code{TRUE}, overlays sleep cycles on the plots.}
 
 \item{overlay_clrs}{Color palette for cycle overlays.}
-
-\item{include_levels}{(Optional) Specifies which densities to plot in \code{plot_densities()}.}
 
 \item{clrs}{Color palette for different sleep states.}
 }

@@ -9,7 +9,6 @@
 #' @param sleepcycle_obj An object of class `SleepCycle`.
 #' @param id (Optional) A subject identifier for grouped objects.
 #' @param stage_order (Optional) Reorders sleep stages in `plot_hypnogram()`.
-#' @param include_levels (Optional) Specifies which densities to plot in `plot_densities()`.
 #' @param overlay_cycles Logical. If `TRUE`, overlays sleep cycles on the plots.
 #' @param clrs Color palette for different sleep states.
 #' @param overlay_clrs Color palette for cycle overlays.
@@ -76,7 +75,7 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
       shape = 15,
       show.legend = F
     ) +
-    ggplot2::xlab("") +
+    ggplot2::xlab("Epoch") +
     ggplot2::ylab("Stage") +
     ggplot2::theme_classic() +
     ggplot2::theme(text = ggplot2::element_text(size = 16))
@@ -118,7 +117,7 @@ plot_hypnogram <- function(sleepcycle_obj, id = NULL, stage_order = NULL, overla
 #' @export
 #' @importFrom rlang .data
 #' @rdname sleep_plots
-plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clrs = c("#3B528BFF", "#5DC863FF"), overlay_cycles = TRUE, overlay_clrs = clrs) {
+plot_densities <- function(sleepcycle_obj, id = NULL, clrs = c("#3B528BFF", "#5DC863FF"), overlay_cycles = TRUE) {
 
   if (!inherits(sleepcycle_obj, "SleepCycle")) {
     stop("The first argument (sleepcycle_obj) must be of class `SleepCycle`.")
@@ -131,13 +130,22 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
   x <- .handle_grouped_obj(sleepcycle_obj, .id = id)
   opts <- x$info$method_opts
 
-  if (is.null(include_levels)) {
-    include_levels <- c(opts$NREMP$density_col, opts$REMP$density_col)
-  }
-
   x_long <- x$epoch |>
-    tidyr::pivot_longer(cols = opts$density_levels) |>
-    dplyr::filter(.data$name %in% include_levels)
+    tidyr::pivot_longer(
+      cols = opts$density_levels,
+      names_to = "name",
+      values_to = "value"
+    ) |>
+    dplyr::filter(.data$name %in% c(opts$NREMP$density_col, opts$REMP$density_col))
+
+  if (length(unique(x_long$name)) == 1) {
+    if (unique(x_long$name) == opts$NREMP$density_col) {
+      clrs <- clrs[1]
+    }
+    if (unique(x_long$name) == opts$REMP$density_col) {
+      clrs <- clrs[2]
+    }
+  }
 
   x_long$threshold <- NA
   for (type in c("NREMP", "REMP")) {
@@ -156,7 +164,7 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
     ggplot2::scale_color_manual(values = clrs) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = .data$threshold), linetype = 2) +
     ggplot2::xlab(x$info$epoch_col) +
-    ggplot2::xlab("") +
+    ggplot2::xlab("Epoch") +
     ggplot2::ylab("Density") +
     ggplot2::theme_classic() +
     ggplot2::theme(text = ggplot2::element_text(size = 16))
@@ -164,12 +172,11 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
   if (overlay_cycles) {
 
     if (length(unique(x$summary$cycle_type)) == 1) {
-
       if (unique(x$summary$cycle_type) == "NREMP") {
-        overlay_clrs <- "#3B528BFF"
+        clrs <- clrs[1]
       }
       if (unique(x$summary$cycle_type) == "REMP") {
-        overlay_clrs <- "#5DC863FF"
+        clrs <- clrs[2]
       }
     }
 
@@ -185,7 +192,7 @@ plot_densities <- function(sleepcycle_obj, id = NULL, include_levels = NULL, clr
       alpha = .2,
       show.legend = F
     ) +
-      ggplot2::scale_fill_manual(values = overlay_clrs)
+      ggplot2::scale_fill_manual(values = clrs)
   }
 
   return(p)
@@ -222,6 +229,7 @@ plot_cycles <- function(sleepcycle_obj, id = NULL) {
       mapping = ggplot2::aes(.data[[x$info$epoch_col]], .data$cycle_type),
       size = 2
     ) +
+    ggplot2::xlab("Epoch") +
     ggplot2::scale_y_discrete(labels = c("NC", unique(x$summary$cycle_type))) +
     ggplot2::scale_color_viridis_d(name = "Stage") +
     ggplot2::guides(colour = ggplot2::guide_legend(nrow = 1)) +
@@ -229,7 +237,6 @@ plot_cycles <- function(sleepcycle_obj, id = NULL) {
     ggplot2::theme(
       text = ggplot2::element_text(size = 16),
       axis.title.y = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_blank(),
       legend.position = "top"
     )
 
@@ -273,13 +280,21 @@ plot_summary <- function(sleepcycle_obj, id = NULL) {
   }
 
   plots <- list(
-    plot_cycles(sleepcycle_obj, id = id),
-    plot_hypnogram(sleepcycle_obj, id = id) + ggplot2::theme(plot.margin = ggplot2::margin(0, 0, 0, 18))
+    plot_cycles(sleepcycle_obj, id = id) + ggplot2::theme(axis.title.x = ggplot2::element_blank()),
+    plot_hypnogram(sleepcycle_obj, id = id) +
+      ggplot2::theme(
+      plot.margin = ggplot2::margin(0, 0, 0, 18),
+      axis.title.x = ggplot2::element_blank()
+    )
   )
 
   if (sleepcycle_obj$info$method == "dude") {
     plots <- c(plots, list(
-      plot_densities(sleepcycle_obj, id = id) + ggplot2::theme(plot.margin = ggplot2::margin(0, 0, 0, 17))
+      plot_densities(sleepcycle_obj, id = id) +
+        ggplot2::theme(
+        plot.margin = ggplot2::margin(0, 0, 0, 17),
+        axis.title.x = ggplot2::element_blank()
+      )
     ))
   }
 
