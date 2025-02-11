@@ -218,7 +218,9 @@ run_sleepcycles_app <- function(sleepcycles_obj) {
               "threshold" = input$remp_threshold,
               "min_gap" = input$remp_min_gap,
               "min_size" = input$remp_min_size
-            )
+            ),
+            "kernel" = data$info$method_opts$kernel,
+            "combos" = data$info$method_opts$combos
           )
         )
     })
