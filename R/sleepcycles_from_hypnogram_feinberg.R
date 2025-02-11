@@ -1,12 +1,5 @@
 .sleepcycles_from_hypnogram_feinberg <- function(df, epoch_col, stage_col, options = list()) {
 
-  # Set default options if not provided
-  if (!"sleepstart" %in% names(options)) options$sleepstart <- "N1"
-  if (!"treat_as_W" %in% names(options)) options$treat_as_W <- "A"
-  if (!"rm_incomplete_period" %in% names(options)) options$rm_incomplete_period <- FALSE
-  if (!"REMP_length" %in% names(options)) options$REMP_length <- 10
-  if (!"sleep_levels" %in% names(options)) options$sleep_levels <- c("N1", "N2", "N3", "R")
-
   # Preprocess data: Standardize wake stages and classify sleep stages
   df <- .prep_data(df, stage_col = stage_col, treat_as_W = options$treat_as_W)
 

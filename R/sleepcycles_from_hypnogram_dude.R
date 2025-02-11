@@ -2,40 +2,6 @@
 
   .check_sleepcycles_dude(df = df, stage_col = stage_col, options = options)
 
-  if ("sleep_levels" %in% names(options) == FALSE) {
-    options <- append(options, list("sleep_levels" = c("N1", "N2", "N3", "R")))
-  }
-
-  if ("combos" %in% names(options) == FALSE) {
-    options <- append(options, list("combos" = list("N2_N3" = c("N2", "N3"))))
-  }
-
-  if ("NREMP" %in% names(options) == FALSE) {
-    options <- append(options, list(
-      "NREMP" = list(
-        "density_col" = "N2_N3",
-        "threshold" = 0.5,
-        "min_gap" = 20,
-        "min_size" = 20
-      )
-    ))
-  }
-
-  if ("REMP" %in% names(options) == FALSE) {
-    options <- append(options, list(
-      "REMP" = list(
-        "density_col" = "R",
-        "threshold" = 0.5,
-        "min_gap" = 15,
-        "min_size" = 10
-      )
-    ))
-  }
-
-  if ("kernel" %in% names(options) == FALSE) {
-    options <- append(options, list("kernel" = .gaussian_kernel(size = 15, sigma = 3)))
-  }
-
   df_dens <- .class_density(
     df = df,
     epoch_col = epoch_col,
@@ -95,49 +61,21 @@
   valid_option_args <- c("sleep_levels", "combos", "NREMP", "REMP", "kernel")
   valid_nremp_remp_args <- c("density_col", "threshold", "min_gap", "min_size")
 
-  if (length(options) > 0) {
-    if (!all(names(options) %in% valid_option_args)) {
-      stop("all names in `options` list must be the following: ", paste0(valid_option_args, collapse = ", "))
-    }
-
-    if ("sleep_levels" %in% names(options)) {
-      if (!all(options$sleep_levels %in% levels(df[[stage_col]]))) {
-        stop("`sleep_levels` must only contain levels that are in `stage_col`")
-      }
-    }
-
-    if ("combos" %in% names(options)) {
-      if (is.null(names(options$combos))) {
-        stop("`combos` must be a named list.")
-      }
-      if (!all(unique(Reduce(c, options$combos)) %in% unique(df[[stage_col]]))) {
-        stop("`combos` must be a named list, and all list items must contain levels that are in `stage_col`")
-      }
-    }
-
-    if ("kernel" %in% names(options)) {
-      if (sum(options$kernel) != 1) {
-        stop("The kernel must sum to 1. Please ensure it is normalized first.")
-      }
-      if (length(options$kernel) %% 2 != 1) {
-        stop("The length of the kernel must be odd.")
-      }
-    }
-
-    if ("NREMP" %in% names(options)) {
-      if (!all(names(options$NREMP) %in% valid_nremp_remp_args)) {
-        stop("Valid option names for `NREMP` are: ", paste0(valid_nremp_remp_args, collapse = ", "))
-      }
-    }
-
-    if ("REMP" %in% names(options)) {
-      if (!all(names(options$REMP) %in% valid_nremp_remp_args)) {
-        stop("Valid option names for `REMP` are: ", paste0(valid_nremp_remp_args, collapse = ", "))
-      }
-    }
-
+  if (!all(names(options) %in% valid_option_args)) {
+    stop("all names in `options` list must be the following: ", paste0(valid_option_args, collapse = ", "), call. = FALSE)
   }
-
+  if (sum(options$kernel) != 1) {
+    stop("The kernel must sum to 1. Please ensure it is normalized first.", call. = FALSE)
+  }
+  if (length(options$kernel) %% 2 != 1) {
+    stop("The length of the kernel must be odd.", call. = FALSE)
+  }
+  if (!all(names(options$NREMP) %in% valid_nremp_remp_args)) {
+    stop("Valid option names for `NREMP` are: ", paste0(valid_nremp_remp_args, collapse = ", "), call. = FALSE)
+  }
+  if (!all(names(options$REMP) %in% valid_nremp_remp_args)) {
+    stop("Valid option names for `REMP` are: ", paste0(valid_nremp_remp_args, collapse = ", "), call. = FALSE)
+  }
 }
 
 .binarize_levels <- function(df, epoch_col, stage_col) {
@@ -184,7 +122,7 @@
   for (i in seq_along(options$combos)) {
     res_combo_cols <- lapply(options$combos[[i]], function(s) {
       if (s %in% colnames(res) == FALSE) {
-        warning("One of the combo levels (", s, ") is not present in hypnogram", call. = FALSE)
+        warning("One of the combo levels (", s, ") is not present in hypnogram, ignoring", call. = FALSE)
         return(NULL)
       } else {
         return(res[[s]])
@@ -296,7 +234,7 @@
       next
     }
 
-    warning("NREMP and REMP overlap (", overlap[1], "-", overlap[length(overlap)], "). Splitting NREMP and keeping REMP...", call. = FALSE)
+    warning("NREMP and REMP overlap (epochs ", overlap[1], "-", overlap[length(overlap)], "). Splitting NREMP and keeping REMP...", call. = FALSE)
     nremp_seg[nremp_seg %in% overlap] <- NA
 
     nremp_seg_grp <- cumsum(is.na(nremp_seg))
