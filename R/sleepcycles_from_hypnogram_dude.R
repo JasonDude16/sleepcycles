@@ -95,7 +95,7 @@
 }
 
 .convolve_same_length <- function(x, kernel) {
-  res <- convolve(x, kernel, type = "open")
+  res <- stats::convolve(x, kernel, type = "open")
   n <- length(x)
   k <- length(kernel)
   start_idx <- ceiling(k / 2)
