@@ -94,29 +94,20 @@
   return(kernel / sum(kernel))
 }
 
-.convolve_with_padding <- function(signal, kernel) {
-
-  N <- length(signal) + length(kernel) - 1
-
-  signal_fft <- stats::fft(c(signal, rep(0, N - length(signal))))
-  kernel_fft <- stats::fft(c(kernel, rep(0, N - length(kernel))))
-
-  convolved_fft <- signal_fft * kernel_fft
-  convolved_signal <- Re(stats::fft(convolved_fft, inverse = TRUE)) / N
-
-  # "clip the wings": extract the valid portion of the result
-  start_idx <- floor(length(kernel) / 2) + 1
-  end_idx <- start_idx + length(signal) - 1
-  convolved_signal <- convolved_signal[start_idx:end_idx]
-
-  return(convolved_signal)
+.convolve_same_length <- function(x, kernel) {
+  res <- convolve(x, kernel, type = "open")
+  n <- length(x)
+  k <- length(kernel)
+  start_idx <- ceiling(k / 2)
+  end_idx <- start_idx + n - 1
+  return(res[start_idx:end_idx])
 }
 
 .class_density <- function(df, epoch_col, stage_col, options) {
 
   res <- .binarize_levels(df = df, epoch_col = epoch_col, stage_col = stage_col)
 
-  res[-c(1, 2)] <- apply(res[-c(1, 2)], 2, .convolve_with_padding, kernel = options$kernel)
+  res[-c(1, 2)] <- apply(res[-c(1, 2)], 2, .convolve_same_length, kernel = options$kernel)
   res[-c(1, 2)] <- apply(res[-c(1, 2)], 2, function(x) ifelse(x < 1e-9, 0, x))
 
   for (i in seq_along(options$combos)) {
