@@ -64,9 +64,6 @@
   if (!all(names(options) %in% valid_option_args)) {
     stop("all names in `options` list must be the following: ", paste0(valid_option_args, collapse = ", "), call. = FALSE)
   }
-  if (sum(options$kernel) != 1) {
-    stop("The kernel must sum to 1. Please ensure it is normalized first.", call. = FALSE)
-  }
   if (length(options$kernel) %% 2 != 1) {
     stop("The length of the kernel must be odd.", call. = FALSE)
   }
