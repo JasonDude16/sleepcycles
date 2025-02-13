@@ -352,7 +352,7 @@ plot_ids <- function(sleepcycle_obj) {
   p <- sleepcycle_obj$summary |>
     dplyr::filter(.data$cycle_type %in% c("NREMP", "REMP")) |>
     dplyr::select(dplyr::all_of(c(id_col, "cycle", "cycle_type", "start_prop", "end_prop"))) |>
-    tidyr::pivot_longer(-c(.data[[id_col]], .data$cycle_type, .data$cycle)) |>
+    tidyr::pivot_longer(-c(dplyr::all_of(c(id_col, "cycle_type", "cycle")))) |>
     ggplot2::ggplot(ggplot2::aes(
       .data$value,
       .data[[id_col]],

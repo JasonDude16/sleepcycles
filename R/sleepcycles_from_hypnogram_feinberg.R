@@ -44,7 +44,7 @@
 
   # Format output: Assign cycle labels
   df_epoch <- df |>
-    dplyr::rename(cycle = .data$cycles) |>
+    dplyr::rename(cycle = dplyr::all_of("cycles")) |>
     dplyr::mutate(cycle_type = dplyr::case_when(REM.NREM == 0 ~ "NREMP", REM.NREM == 1 ~ "REMP")) |>
     dplyr::select(dplyr::all_of(c(epoch_col, stage_col, "cycle", "cycle_type"))) |>
     tibble::as_tibble()
