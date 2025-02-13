@@ -46,6 +46,15 @@ test_that("Plot functions with dude, multi-subject return ggplot objects", {
 
   p <- plot_summary(result, id = 1)
   expect_s3_class(p, "grob")
+
+  p <- plot_cycle_proportions(result)
+  expect_s3_class(p, "ggplot")
+
+  p <- plot_cycle_counts(result)
+  expect_s3_class(p, "ggplot")
+
+  p <- plot_ids(result)
+  expect_s3_class(p, "ggplot")
 })
 
 test_that("Plot functions with feinberg, single-subject return ggplot objects", {
@@ -88,4 +97,13 @@ test_that("Plot functions with feinberg, multi-subject return ggplot objects", {
 
   p <- plot_summary(result, id = 1)
   expect_s3_class(p, "grob")
+
+  p <- plot_cycle_proportions(result)
+  expect_s3_class(p, "ggplot")
+
+  p <- plot_cycle_counts(result)
+  expect_s3_class(p, "ggplot")
+
+  p <- plot_ids(result)
+  expect_s3_class(p, "ggplot")
 })
