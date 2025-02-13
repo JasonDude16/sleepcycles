@@ -106,7 +106,7 @@ sleepcycles_from_hypnogram <- function(df, epoch_col, stage_col, method = "dude"
       "sleep_levels" = c("N1", "N2", "N3", "R")
     )
   )
-  opts[[method]] <- deep_merge(opts[[method]], options)
+  opts[[method]] <- .deep_merge(opts[[method]], options)
 
   if (verbose) {
     if (method == "dude") {
@@ -323,10 +323,10 @@ check_hypnogram <- function(df, epoch_col, stage_col, id_col = NULL, valid_level
   }
 }
 
-deep_merge <- function(defaults, user) {
+.deep_merge <- function(defaults, user) {
   for (name in names(user)) {
     if (is.list(user[[name]]) && is.list(defaults[[name]])) {
-      defaults[[name]] <- deep_merge(defaults[[name]], user[[name]])
+      defaults[[name]] <- .deep_merge(defaults[[name]], user[[name]])
     } else {
       defaults[[name]] <- user[[name]]
     }
