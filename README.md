@@ -7,6 +7,8 @@
 [![R-CMD-check](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml)
 ![GitHub
 release](https://img.shields.io/github/v/release/JasonDude16/sleepcycles)
+[![Codecov test
+coverage](https://codecov.io/gh/JasonDude16/sleepcycles/graph/badge.svg)](https://app.codecov.io/gh/JasonDude16/sleepcycles)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
@@ -70,13 +72,33 @@ sleepcycles_obj <- sleepcycles_from_hypnogram(
   stage_col = "stage", 
   method = "dude"
 )
-#> Warning: NREMP and REMP overlap (297-297). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (672-672). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (844-844). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (297-338). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (476-515). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (672-720). Splitting NREMP and keeping REMP...
-#> Warning: NREMP and REMP overlap (844-946). Splitting NREMP and keeping REMP...
+#> Computing sleep cycles with the following parameters
+#> NREMP:
+#>   - Density column: N1_N2_N3
+#>   - Threshold: 0.8
+#>   - Minimum gap: 20
+#>   - Minimum size: 40
+#> REMP:
+#>   - Density column: R
+#>   - Threshold: 0.3
+#>   - Minimum gap: 15
+#>   - Minimum size: 10
+#> Warning: NREMP and REMP overlap (epochs 135-295). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 517-670). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 842-842). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 135-146). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 295-340). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 474-517). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 670-722). Splitting NREMP and keeping
+#> REMP...
+#> Warning: NREMP and REMP overlap (epochs 842-948). Splitting NREMP and keeping
+#> REMP...
 ```
 
 #### 4️⃣ Visualize Sleep Cycles
