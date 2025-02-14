@@ -49,6 +49,7 @@
 </h1></div>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <p>The <code>sleepcycles</code> package provides tools for detecting, analyzing, and visualizing sleep cycles from hypnogram data using density-based and rule-based (Feinberg) algorithms. It supports both single- and multi-subject hypnograms, enabling users to extract and explore Non-REM (NREMP) and REM (REMP) periods with flexible parameter settings. The package includes an interactive Shiny application, a suite of visualization functions and utilities validating sleep staging data.</p>
 <p>📌 Designed for sleep researchers, clinicians, and data scientists, <code>sleepcycles</code> helps uncover the underlying dynamics of sleep architecture and assess the impact of sleep patterns in healthy and clinical populations.</p>
 <hr>
@@ -76,76 +77,55 @@
 <div class="section level4">
 <h4 id="id_2️⃣-load-example-data">2️⃣ Load Example Data<a class="anchor" aria-label="anchor" href="#id_2%EF%B8%8F%E2%83%A3-load-example-data"></a>
 </h4>
+<p><code>sleepcycles</code> contains two example datasets: <code>hypnogram_single</code> and <code>hypnogram_grouped</code>, which contain single- and multi-subject hypnograms, respectively. We will load the multi-subject hypnogram for this example.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hypnogram_single"</span>, package <span class="op">=</span> <span class="st">"sleepcycles"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">hypnogram_single</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   epoch stage</span></span>
-<span><span class="co">#&gt; 1     1     W</span></span>
-<span><span class="co">#&gt; 2     2     W</span></span>
-<span><span class="co">#&gt; 3     3     W</span></span>
-<span><span class="co">#&gt; 4     4     W</span></span>
-<span><span class="co">#&gt; 5     5     W</span></span>
-<span><span class="co">#&gt; 6     6     W</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hypnogram_grouped"</span>, package <span class="op">=</span> <span class="st">"sleepcycles"</span><span class="op">)</span></span></code></pre></div>
+<p><code>sleepcycles</code> requires a hypnogram (in the format of a data frame) with two variables: one of the epoch, and one of the sleep stage; if there are multiple subjects, an ID variable is also required.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">hypnogram_grouped</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   epoch stage id</span></span>
+<span><span class="co">#&gt; 1     1     W  1</span></span>
+<span><span class="co">#&gt; 2     2     W  1</span></span>
+<span><span class="co">#&gt; 3     3     W  1</span></span>
+<span><span class="co">#&gt; 4     4     W  1</span></span>
+<span><span class="co">#&gt; 5     5     W  1</span></span>
+<span><span class="co">#&gt; 6     6     W  1</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="id_3️⃣-detect-sleep-cycles">3️⃣ Detect Sleep Cycles<a class="anchor" aria-label="anchor" href="#id_3%EF%B8%8F%E2%83%A3-detect-sleep-cycles"></a>
 </h4>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># warnings expected</span></span>
-<span><span class="va">sleepcycles_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sleepcycles_from_hypnogram.html">sleepcycles_from_hypnogram</a></span><span class="op">(</span></span>
-<span>  <span class="va">hypnogram_single</span>, </span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sleepcycle_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sleepcycles_from_hypnogram.html">sleepcycles_from_hypnogram</a></span><span class="op">(</span></span>
+<span>  <span class="va">hypnogram_grouped</span>, </span>
 <span>  epoch_col <span class="op">=</span> <span class="st">"epoch"</span>, </span>
 <span>  stage_col <span class="op">=</span> <span class="st">"stage"</span>, </span>
-<span>  method <span class="op">=</span> <span class="st">"dude"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Computing sleep cycles with the following parameters</span></span>
-<span><span class="co">#&gt; NREMP:</span></span>
-<span><span class="co">#&gt;   - Density column: N1_N2_N3</span></span>
-<span><span class="co">#&gt;   - Threshold: 0.8</span></span>
-<span><span class="co">#&gt;   - Minimum gap: 20</span></span>
-<span><span class="co">#&gt;   - Minimum size: 40</span></span>
-<span><span class="co">#&gt; REMP:</span></span>
-<span><span class="co">#&gt;   - Density column: R</span></span>
-<span><span class="co">#&gt;   - Threshold: 0.3</span></span>
-<span><span class="co">#&gt;   - Minimum gap: 15</span></span>
-<span><span class="co">#&gt;   - Minimum size: 10</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 135-295). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 517-670). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 842-842). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 135-146). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 295-340). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 474-517). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 670-722). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span>
-<span><span class="co">#&gt; Warning: NREMP and REMP overlap (epochs 842-948). Splitting NREMP and keeping</span></span>
-<span><span class="co">#&gt; REMP...</span></span></code></pre></div>
+<span>  id_col <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="id_4️⃣-visualize-sleep-cycles">4️⃣ Visualize Sleep Cycles<a class="anchor" aria-label="anchor" href="#id_4%EF%B8%8F%E2%83%A3-visualize-sleep-cycles"></a>
 </h4>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_summary.html">plot_summary</a></span><span class="op">(</span><span class="va">sleepcycles_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/sleep_plots.html">plot_cycles</a></span><span class="op">(</span><span class="va">sleepcycle_obj</span>, id <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/sleep_plots.html">plot_hypnogram</a></span><span class="op">(</span><span class="va">sleepcycle_obj</span>, id <span class="op">=</span> <span class="st">"1"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="id_5️⃣-run-the-interactive-shiny-app">5️⃣ Run the Interactive Shiny App<a class="anchor" aria-label="anchor" href="#id_5%EF%B8%8F%E2%83%A3-run-the-interactive-shiny-app"></a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="reference/run_sleepcycles_app.html">run_sleepcycles_app</a></span><span class="op">(</span><span class="va">sleepcycles_obj</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/run_sleepcycles_app.html">run_sleepcycles_app</a></span><span class="op">(</span><span class="va">sleepcycle_obj</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_-features">📊 Features<a class="anchor" aria-label="anchor" href="#id_-features"></a>
 </h3>
 <ul>
-<li>✔ <strong>Sleep Cycle Detection</strong>: Supports DUDE (Density-Based) and Feinberg (Rule-Based) algorithms</li>
+<li>✔ <strong>Sleep Cycle Detection</strong>: Supports Feinberg (Rule-Based) algorithm and a novel density-based algorithm</li>
 <li>✔ <strong>Interactive Visualization</strong>: Generate hypnograms, density plots, and cycle summaries</li>
 <li>✔ <strong>Shiny App</strong>: Modify and explore cycle detection parameters interactively</li>
 <li>✔ <strong>Preprocessing &amp; Validation</strong>: Built-in data validation tools</li>
@@ -157,8 +137,8 @@
 </h3>
 <table class="table">
 <colgroup>
-<col width="35%">
-<col width="64%">
+<col width="32%">
+<col width="67%">
 </colgroup>
 <thead><tr class="header">
 <th><strong>Function</strong></th>
@@ -167,7 +147,7 @@
 <tbody>
 <tr class="odd">
 <td><code><a href="reference/sleepcycles_from_hypnogram.html">sleepcycles_from_hypnogram()</a></code></td>
-<td>Detects sleep cycles using DUDE or Feinberg</td>
+<td>Detects sleep cycles using DUDE or Feinberg method</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/sleep_plots.html">plot_hypnogram()</a></code></td>
@@ -175,7 +155,7 @@
 </tr>
 <tr class="odd">
 <td><code><a href="reference/sleep_plots.html">plot_densities()</a></code></td>
-<td>Plots sleep cycle density curves</td>
+<td>Plots hypnogram stage densities</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/sleep_plots.html">plot_cycles()</a></code></td>
@@ -183,11 +163,11 @@
 </tr>
 <tr class="odd">
 <td><code><a href="reference/plot_summary.html">plot_summary()</a></code></td>
-<td>Provides a combined visualization of sleep cycles</td>
+<td>Provides a combined visualization of sleep cycles and hypnogram</td>
 </tr>
 <tr class="even">
 <td><code><a href="reference/run_sleepcycles_app.html">run_sleepcycles_app()</a></code></td>
-<td>Launches an interactive Shiny app for cycle exploration</td>
+<td>An interactive Shiny app for sleep cycle parameter exploration</td>
 </tr>
 <tr class="odd">
 <td><code><a href="reference/check_hypnogram.html">check_hypnogram()</a></code></td>
@@ -195,14 +175,6 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section level3">
-<h3 id="id_-example-datasets">📚 Example Datasets<a class="anchor" aria-label="anchor" href="#id_-example-datasets"></a>
-</h3>
-<p>The package includes two example datasets: <code>hypnogram_single</code> and <code>hypnogram_grouped</code>, containing single and multi-subject hypnogram datasets, respectively.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hypnogram_single"</span>, package <span class="op">=</span> <span class="st">"sleepcycles"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hypnogram_grouped"</span>, package <span class="op">=</span> <span class="st">"sleepcycles"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_-contributing">📌 Contributing<a class="anchor" aria-label="anchor" href="#id_-contributing"></a>
