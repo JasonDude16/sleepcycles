@@ -4,6 +4,7 @@
 # sleepcycles: Detect and Visualize Sleep Cycles from Hypnograms
 
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JasonDude16/sleepcycles/actions/workflows/R-CMD-check.yaml)
 ![GitHub
 release](https://img.shields.io/github/v/release/JasonDude16/sleepcycles)
@@ -11,6 +12,7 @@ release](https://img.shields.io/github/v/release/JasonDude16/sleepcycles)
 coverage](https://codecov.io/gh/JasonDude16/sleepcycles/graph/badge.svg)](https://app.codecov.io/gh/JasonDude16/sleepcycles)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 <!-- badges: end -->
 
 The `sleepcycles` package provides tools for detecting, analyzing, and
@@ -50,77 +52,67 @@ library(sleepcycles)
 
 #### 2️⃣ Load Example Data
 
+`sleepcycles` contains two example datasets: `hypnogram_single` and
+`hypnogram_grouped`, which contain single- and multi-subject hypnograms,
+respectively. We will load the multi-subject hypnogram for this example.
+
 ``` r
-data("hypnogram_single", package = "sleepcycles")
-head(hypnogram_single)
-#>   epoch stage
-#> 1     1     W
-#> 2     2     W
-#> 3     3     W
-#> 4     4     W
-#> 5     5     W
-#> 6     6     W
+data("hypnogram_grouped", package = "sleepcycles")
+```
+
+`sleepcycles` requires a hypnogram (in the format of a data frame) with
+two variables: one of the epoch, and one of the sleep stage; if there
+are multiple subjects, an ID variable is also required.
+
+``` r
+head(hypnogram_grouped)
+#>   epoch stage id
+#> 1     1     W  1
+#> 2     2     W  1
+#> 3     3     W  1
+#> 4     4     W  1
+#> 5     5     W  1
+#> 6     6     W  1
 ```
 
 #### 3️⃣ Detect Sleep Cycles
 
 ``` r
-# warnings expected
-sleepcycles_obj <- sleepcycles_from_hypnogram(
-  hypnogram_single, 
+sleepcycle_obj <- sleepcycles_from_hypnogram(
+  hypnogram_grouped, 
   epoch_col = "epoch", 
   stage_col = "stage", 
-  method = "dude"
+  id_col = "id",
+  verbose = FALSE
 )
-#> Computing sleep cycles with the following parameters
-#> NREMP:
-#>   - Density column: N1_N2_N3
-#>   - Threshold: 0.8
-#>   - Minimum gap: 20
-#>   - Minimum size: 40
-#> REMP:
-#>   - Density column: R
-#>   - Threshold: 0.3
-#>   - Minimum gap: 15
-#>   - Minimum size: 10
-#> Warning: NREMP and REMP overlap (epochs 135-295). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 517-670). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 842-842). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 135-146). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 295-340). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 474-517). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 670-722). Splitting NREMP and keeping
-#> REMP...
-#> Warning: NREMP and REMP overlap (epochs 842-948). Splitting NREMP and keeping
-#> REMP...
 ```
 
 #### 4️⃣ Visualize Sleep Cycles
 
 ``` r
-plot_summary(sleepcycles_obj)
+plot_cycles(sleepcycle_obj, id = "1")
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+``` r
+plot_hypnogram(sleepcycle_obj, id = "1")
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
 #### 5️⃣ Run the Interactive Shiny App
 
 ``` r
 if (interactive()) {
-  run_sleepcycles_app(sleepcycles_obj)
+  run_sleepcycles_app(sleepcycle_obj)
 }
 ```
 
 ### 📊 Features
 
-- ✔ **Sleep Cycle Detection**: Supports DUDE (Density-Based) and
-  Feinberg (Rule-Based) algorithms
+- ✔ **Sleep Cycle Detection**: Supports Feinberg (Rule-Based) algorithm
+  and a novel density-based algorithm
 - ✔ **Interactive Visualization**: Generate hypnograms, density plots,
   and cycle summaries
 - ✔ **Shiny App**: Modify and explore cycle detection parameters
@@ -131,26 +123,15 @@ if (interactive()) {
 
 ### 📖 Available Functions
 
-| **Function**                   | **Description**                                         |
-|--------------------------------|---------------------------------------------------------|
-| `sleepcycles_from_hypnogram()` | Detects sleep cycles using DUDE or Feinberg             |
-| `plot_hypnogram()`             | Generates a hypnogram plot                              |
-| `plot_densities()`             | Plots sleep cycle density curves                        |
-| `plot_cycles()`                | Visualizes detected sleep cycles                        |
-| `plot_summary()`               | Provides a combined visualization of sleep cycles       |
-| `run_sleepcycles_app()`        | Launches an interactive Shiny app for cycle exploration |
-| `check_hypnogram()`            | Validates hypnogram data for errors                     |
-
-### 📚 Example Datasets
-
-The package includes two example datasets: `hypnogram_single` and
-`hypnogram_grouped`, containing single and multi-subject hypnogram
-datasets, respectively.
-
-``` r
-data("hypnogram_single", package = "sleepcycles")
-data("hypnogram_grouped", package = "sleepcycles")
-```
+| **Function**                   | **Description**                                                 |
+|--------------------------------|-----------------------------------------------------------------|
+| `sleepcycles_from_hypnogram()` | Detects sleep cycles using DUDE or Feinberg method              |
+| `plot_hypnogram()`             | Generates a hypnogram plot                                      |
+| `plot_densities()`             | Plots hypnogram stage densities                                 |
+| `plot_cycles()`                | Visualizes detected sleep cycles                                |
+| `plot_summary()`               | Provides a combined visualization of sleep cycles and hypnogram |
+| `run_sleepcycles_app()`        | An interactive Shiny app for sleep cycle parameter exploration  |
+| `check_hypnogram()`            | Validates hypnogram data for errors                             |
 
 ### 📌 Contributing
 
